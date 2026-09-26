@@ -26,7 +26,9 @@ def index():
 # ── 2. Pase de lista diario por sección ──────────────────────────────────────
 @attendance_bp.route('/pase-lista', methods=['GET', 'POST'])
 @attendance_bp.route('/diaria', methods=['GET', 'POST'])
+@attendance_bp.route('/registrar', methods=['GET', 'POST'])
 def register_daily():
+
     """Registro de asistencia diaria por sección escolar (P/T/A/E)."""
     section_id = request.args.get('section_id', type=int)
     date_str   = request.args.get('date', date.today().isoformat())

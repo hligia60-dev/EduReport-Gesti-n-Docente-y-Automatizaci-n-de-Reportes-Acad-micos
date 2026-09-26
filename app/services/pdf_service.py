@@ -232,14 +232,28 @@ def generate_official_pdf(data, output_stream=None):
     # ─────────────────────────────────────────────────────────────────────────
     inst = data.get('institucion', get_default_institutional_data())
 
-    # Buscar logo oficial
-    logo_path = os.path.join('app', 'static', 'img', 'logo_minerd.png')
-    logo_flowable = None
-    if os.path.exists(logo_path):
+    # Buscar logos oficiales (MINERD a la izquierda y Centro Educativo a la derecha)
+    logo_minerd_path = os.path.join('app', 'static', 'img', 'logo_minerd.png')
+    logo_centro_path = os.path.join('app', 'static', 'img', 'logo_centro.png')
+    
+    logo_minerd = None
+    if os.path.exists(logo_minerd_path):
         try:
-            logo_flowable = Image(logo_path, width=54, height=54)
+            logo_minerd = Image(logo_minerd_path, width=64, height=50)
         except Exception:
-            logo_flowable = None
+            logo_minerd = None
+
+    logo_centro = None
+    if os.path.exists(logo_centro_path):
+        try:
+            logo_centro = Image(logo_centro_path, width=50, height=50)
+        except Exception:
+            logo_centro = None
+    elif os.path.exists(os.path.join('Logos', 'images.png')):
+        try:
+            logo_centro = Image(os.path.join('Logos', 'images.png'), width=50, height=50)
+        except Exception:
+            logo_centro = None
 
     header_text_cells = [
         Paragraph("REPÚBLICA DOMINICANA", title_inst_style),
@@ -257,15 +271,29 @@ def generate_official_pdf(data, output_stream=None):
         ),
     ]
 
-    if logo_flowable:
+    left_logo = logo_minerd or logo_centro
+    right_logo = logo_centro or logo_minerd
+
+    if left_logo and right_logo:
         header_table = Table(
-            [[logo_flowable, header_text_cells, logo_flowable]],
-            colWidths=[60, content_width - 120, 60]
+            [[left_logo, header_text_cells, right_logo]],
+            colWidths=[65, content_width - 130, 65]
         )
         header_table.setStyle(TableStyle([
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('ALIGN', (0, 0), (0, -1), 'CENTER'),
             ('ALIGN', (2, 0), (2, -1), 'CENTER'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+            ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ]))
+    elif left_logo:
+        header_table = Table(
+            [[left_logo, header_text_cells]],
+            colWidths=[65, content_width - 65]
+        )
+        header_table.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
             ('TOPPADDING', (0, 0), (-1, -1), 0),
         ]))
@@ -277,6 +305,7 @@ def generate_official_pdf(data, output_stream=None):
         header_table.setStyle(TableStyle([
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ]))
+
 
     story.append(header_table)
     story.append(Spacer(1, 6))

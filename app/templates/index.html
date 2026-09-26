@@ -64,9 +64,29 @@
      ========================================================================= -->
 <section class="hero-section">
     <div class="container">
+        <!-- Banner Institucional y de Autoría -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 p-3 rounded-4 bg-white shadow-sm border border-light">
+            <div class="d-flex align-items-center gap-3">
+                <img src="{{ url_for('static', filename='img/logo_minerd.png') }}" alt="Logo MINERD" style="height: 50px; width: auto; object-fit: contain;">
+                <div class="vr d-none d-sm-block"></div>
+                <img src="{{ url_for('static', filename='img/logo_centro.png') }}" alt="Logo Centro" style="height: 46px; width: auto; object-fit: contain;">
+                <div class="d-flex flex-column ms-1">
+                    <span class="badge bg-primary text-white rounded-pill px-3 py-1 mb-1" style="width: fit-content;">MINERD &bull; República Dominicana</span>
+                    <span class="small fw-bold text-dark">Liceo Secundario República Dominicana &bull; Nivel Secundario</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="text-sm-end">
+                    <small class="text-muted d-block" style="font-size: 0.72rem; text-transform: uppercase;">Creadora y Autora del Proyecto</small>
+                    <strong class="text-primary fs-6"><i class="bi bi-award-fill text-warning me-1"></i>Lic. Ligia Elena Herrera Frías</strong>
+                </div>
+            </div>
+        </div>
+
         <div class="row align-items-center g-5">
             <div class="col-lg-7">
                 <div class="hero-tag mb-3">
+
                     <span class="badge bg-success rounded-circle p-1"><i class="bi bi-check"
                             style="font-size: 0.65rem;"></i></span>
                     <span>Plataforma Académica Oficial &bull; <strong>Python {{ python_version }} + Flask {{

@@ -168,7 +168,46 @@ class Evaluacion(db.Model):
     tipo = db.Column(db.String(30), default='Ordinaria')          # 'Ordinaria', 'Recuperacion', 'Completiva', 'Extraordinaria'
     aprobado = db.Column(db.Boolean, default=True)
     observaciones = db.Column(db.String(255), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # 4 Calificaciones Ordinarias por Competencia del Período (0-100)
+    c1_score = db.Column(db.Float, nullable=True, default=0.0)
+    c2_score = db.Column(db.Float, nullable=True, default=0.0)
+    c3_score = db.Column(db.Float, nullable=True, default=0.0)
+    c4_score = db.Column(db.Float, nullable=True, default=0.0)
+
+    # 4 Calificaciones de Recuperación Pedagógica (RP) correspondientes a cada competencia
+    c1_rp = db.Column(db.Float, nullable=True)
+    c2_rp = db.Column(db.Float, nullable=True)
+    c3_rp = db.Column(db.Float, nullable=True)
+    c4_rp = db.Column(db.Float, nullable=True)
+
+    @property
+    def c1_final(self):
+        if self.c1_rp is not None:
+            return max(self.c1_score or 0.0, self.c1_rp)
+        return self.c1_score or 0.0
+
+    @property
+    def c2_final(self):
+        if self.c2_rp is not None:
+            return max(self.c2_score or 0.0, self.c2_rp)
+        return self.c2_score or 0.0
+
+    @property
+    def c3_final(self):
+        if self.c3_rp is not None:
+            return max(self.c3_score or 0.0, self.c3_rp)
+        return self.c3_score or 0.0
+
+    @property
+    def c4_final(self):
+        if self.c4_rp is not None:
+            return max(self.c4_score or 0.0, self.c4_rp)
+        return self.c4_score or 0.0
+
+    @property
+    def has_rp_needed(self):
+        scores = [self.c1_score or 0.0, self.c2_score or 0.0, self.c3_score or 0.0, self.c4_score or 0.0]
+        return any(s < 70 for s in scores)
 
     # Propiedades de compatibilidad
     @property

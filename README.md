@@ -381,4 +381,10 @@ EduReport está preparado para ser desplegado fácilmente en diferentes entornos
 2. **Generación Iterativa de Código Limpio:** Desarrollo de los Blueprints, capa de servicios desacoplada, plantillas Jinja2 con Bootstrap 5.3 y reglas de negocio precisas (Regla de 3 Ausencias).
 3. **Automatización de Pruebas:** Creación y depuración interactiva de la suite de pruebas unitarias e integradas asegurando 100% de efectividad antes de cada entrega.
 4. **Ingeniería Editorial de Documentos:** Implementación del servicio de maquetación en PDF con ReportLab garantizando tipografía, encabezados institucionales y firmas oficiales sin depender de herramientas externas.
-Lic. Ligia Elena Herrera Frías
+---
+
+## Creadora y Autora del Proyecto
+
+**Lic. Ligia Elena Herrera Frías**  
+*Especialista en Gestión Educativa y Evaluación Curricular del Nivel Secundario*  
+*Ministerio de Educación de la República Dominicana (MINERD)*

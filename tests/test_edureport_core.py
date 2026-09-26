@@ -319,6 +319,62 @@ class EduReportBasicTests(unittest.TestCase):
         self.assertEqual(res_http.content_type, 'application/pdf', "El Content-Type debe ser 'application/pdf'.")
         self.assertTrue(res_http.data.startswith(b'%PDF'), "La respuesta HTTP debe contener un archivo PDF válido.")
 
+    def test_10_evaluation_4_ordinarias_and_rp(self):
+        """
+        Prueba 10: Validación del registro de 4 calificaciones ordinarias (0-100)
+        y 4 casillas de Recuperación Pedagógica (RP) por competencia.
+        """
+        student = Student.query.first()
+        asig = Asignatura.query.first()
+        self.assertIsNotNone(student)
+        self.assertIsNotNone(asig)
+
+        # Caso: C1=65 (requiere RP), C2=80, C3=75, C4=60 (requiere RP)
+        # RP: C1_RP=85, C4_RP=70
+        ev = evaluation_service.save_evaluacion(
+            student_id=student.id,
+            asignatura_id=asig.id,
+            period="P1",
+            c1_score=65.0,
+            c2_score=80.0,
+            c3_score=75.0,
+            c4_score=60.0,
+            c1_rp=85.0,
+            c4_rp=70.0
+        )
+
+        self.assertEqual(ev.c1_score, 65.0)
+        self.assertEqual(ev.c2_score, 80.0)
+        self.assertEqual(ev.c3_score, 75.0)
+        self.assertEqual(ev.c4_score, 60.0)
+        self.assertEqual(ev.c1_rp, 85.0)
+        self.assertIsNone(ev.c2_rp)
+        self.assertEqual(ev.c4_rp, 70.0)
+
+        # C1_final debe ser max(65, 85) = 85
+        self.assertEqual(ev.c1_final, 85.0)
+        self.assertEqual(ev.c2_final, 80.0)
+        self.assertEqual(ev.c3_final, 75.0)
+        self.assertEqual(ev.c4_final, 70.0)
+
+        # Calificación final promedio = (85 + 80 + 75 + 70) / 4 = 77.5
+        self.assertEqual(ev.calificacion_final_periodo, 77.5)
+        self.assertTrue(ev.aprobado)
+
+        # Validar formulario HTML de registro de calificaciones
+        res_form = self.client.get(f'/evaluaciones/registrar?student_id={student.id}')
+        self.assertEqual(res_form.status_code, 200)
+        self.assertIn(b'c1_score', res_form.data)
+        self.assertIn(b'c1_rp', res_form.data)
+        self.assertIn(b'c4_score', res_form.data)
+        self.assertIn(b'c4_rp', res_form.data)
+
+        # Validar botón "Guardar datos" en formulario de estudiante
+        res_est = self.client.get(f'/estudiantes/{student.id}/editar')
+        self.assertEqual(res_est.status_code, 200)
+        self.assertIn('Guardar datos'.encode('utf-8'), res_est.data)
+
 
 if __name__ == '__main__':
     unittest.main()
+

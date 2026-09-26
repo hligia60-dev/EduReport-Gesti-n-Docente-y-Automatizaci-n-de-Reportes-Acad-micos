@@ -1,7 +1,7 @@
-﻿{% extends 'base.html' %}
-{% block title %}Registrar Calificacion — EduReport{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Registrar Calificaciones por Competencia — EduReport{% endblock %}
 {% block content %}
-<div class="container py-4" style="max-width:720px;">
+<div class="container py-4" style="max-width: 900px;">
   <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
     <a href="{{ url_for('evaluation.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
       <i class="bi bi-arrow-left"></i>
@@ -9,87 +9,335 @@
     <div>
       <h1 class="fw-bold mb-0 fs-4">
         <i class="bi bi-clipboard2-plus text-primary me-2"></i>
-        {{ 'Editar Calificacion' if ev_to_edit else 'Registrar Calificacion' }}
+        {{ 'Editar Calificaciones por Competencia' if ev_to_edit else 'Registrar Calificaciones del Período' }}
       </h1>
-      {% if selected_student %}
-      <p class="text-muted mb-0 small">{{ selected_student.full_name }}</p>
-      {% endif %}
+      <p class="text-muted mb-0 small">
+        Registro oficial de 4 Calificaciones Ordinarias (0–100) y 4 Casillas de Recuperación Pedagógica (RP) según el diseño curricular del MINERD.
+      </p>
     </div>
   </div>
 
   <div class="modern-card p-4">
-    <form method="POST" action="{{ url_for('evaluation.register') }}">
+    <form method="POST" action="{{ url_for('evaluation.register') }}" id="evalForm">
       {% if ev_to_edit %}<input type="hidden" name="eval_id" value="{{ ev_to_edit.id }}">{% endif %}
 
+      <!-- Selección de Estudiante -->
       <div class="mb-3">
-        <label class="form-label fw-semibold">Estudiante</label>
-        <select name="student_id" class="form-select rounded-3" required
-                id="student-select"
-                {% if selected_student %}{% endif %}>
+        <label class="form-label fw-semibold">Estudiante <span class="text-danger">*</span></label>
+        <select name="student_id" class="form-select rounded-3" required id="student-select">
           <option value="">-- Seleccionar estudiante --</option>
           {% for s in students %}
           <option value="{{ s.id }}"
             {% if selected_student and s.id == selected_student.id %}selected
             {% elif ev_to_edit and s.id == ev_to_edit.student_id %}selected{% endif %}>
-            {{ s.full_name }} — {{ s.section.nombre or s.section.name }}
+            {{ s.full_name }} — {{ s.section.nombre or s.section.name }} (RNE: {{ s.registration_number }})
           </option>
           {% endfor %}
         </select>
       </div>
 
-      <div class="row g-3 mb-3">
+      <!-- Asignatura y Período -->
+      <div class="row g-3 mb-4">
         <div class="col-sm-8">
-          <label class="form-label fw-semibold">Asignatura</label>
-          <select name="asignatura_id" class="form-select rounded-3" required>
-            <option value="">-- Seleccionar --</option>
+          <label class="form-label fw-semibold">Asignatura Curricular <span class="text-danger">*</span></label>
+          <select name="asignatura_id" class="form-select rounded-3" required id="asig-select">
+            <option value="">-- Seleccionar Asignatura --</option>
             {% for a in asignaturas %}
             <option value="{{ a.id }}"
-              {% if ev_to_edit and a.id == ev_to_edit.asignatura_id %}selected{% endif %}>
-              {{ a.nombre }} ({{ a.codigo }})
+              {% if selected_asig_id and a.id == selected_asig_id %}selected
+              {% elif ev_to_edit and a.id == ev_to_edit.asignatura_id %}selected{% endif %}>
+              {{ a.nombre }} ({{ a.codigo }}) — {{ a.area }}
             </option>
             {% endfor %}
           </select>
         </div>
         <div class="col-sm-4">
-          <label class="form-label fw-semibold">Periodo</label>
-          <select name="period" class="form-select rounded-3" required>
+          <label class="form-label fw-semibold">Período Lectivo <span class="text-danger">*</span></label>
+          <select name="period" class="form-select rounded-3" required id="period-select">
             {% for p in periods %}
             <option value="{{ p }}"
-              {% if ev_to_edit and ev_to_edit.period == p %}selected{% endif %}>{{ p }}</option>
+              {% if selected_period and selected_period == p %}selected
+              {% elif ev_to_edit and ev_to_edit.period == p %}selected{% endif %}>
+              {{ p }} — Período {{ loop.index }}
+            </option>
             {% endfor %}
           </select>
         </div>
       </div>
 
-      <div class="row g-3 mb-3">
-        <div class="col-sm-6">
-          <label class="form-label fw-semibold">Calificacion Ordinaria <span class="text-muted">(0–100)</span></label>
-          <input type="number" name="score" class="form-control rounded-3" min="0" max="100" step="0.5"
-                 value="{{ ev_to_edit.score if ev_to_edit else '' }}" required placeholder="Ej: 85">
-          <div class="form-text">Minimo aprobatorio: 70 puntos.</div>
+      <!-- Bloque de 4 Calificaciones Ordinarias y 4 Casillas RP -->
+      <div class="card border rounded-4 overflow-hidden mb-4 shadow-sm">
+        <div class="card-header bg-light py-3 px-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="fw-bold mb-0 text-primary">
+              <i class="bi bi-award me-1"></i> 4 Calificaciones Ordinarias y Recuperación Pedagógica (RP)
+            </h6>
+            <small class="text-muted">A cada calificación ordinaria le corresponde una casilla de RP según la competencia evaluada.</small>
+          </div>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">
+            Mínimo aprobatorio: 70 pts
+          </span>
         </div>
-        <div class="col-sm-6">
-          <label class="form-label fw-semibold">Recuperacion Pedagogica <span class="text-muted">(opcional)</span></label>
-          <input type="number" name="calificacion_recuperacion" class="form-control rounded-3" min="0" max="100" step="0.5"
-                 value="{{ ev_to_edit.calificacion_recuperacion if ev_to_edit and ev_to_edit.calificacion_recuperacion else '' }}"
-                 placeholder="Solo si aplica RP">
-          <div class="form-text">Si la RP es mayor, se usa como calificacion final.</div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle mb-0 text-center">
+            <thead class="table-light small text-uppercase">
+              <tr>
+                <th style="width: 28%; text-align: left;" class="ps-3">Competencia a Evaluar</th>
+                <th style="width: 24%;">Calificación Ordinaria <br><small class="text-muted fw-normal">(0–100)</small></th>
+                <th style="width: 24%;">Recup. Pedagógica (RP) <br><small class="text-muted fw-normal">(0–100 si aplica)</small></th>
+                <th style="width: 24%;">Calificación Final <br><small class="text-muted fw-normal">Mayor entre Ord. y RP</small></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Competencia 1 -->
+              <tr>
+                <td class="text-start ps-3">
+                  <div class="fw-bold text-dark">Competencia 1</div>
+                  <small class="text-muted">Comprensión / Comunicativa</small>
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center fw-semibold grade-ord"
+                         name="c1_score" id="c1_score" placeholder="0-100" required
+                         value="{{ ev_to_edit.c1_score if ev_to_edit and ev_to_edit.c1_score is not none else (ev_to_edit.score if ev_to_edit else '') }}">
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center grade-rp"
+                         name="c1_rp" id="c1_rp" placeholder="Opcional RP1"
+                         value="{{ ev_to_edit.c1_rp if ev_to_edit and ev_to_edit.c1_rp is not none else '' }}">
+                </td>
+                <td class="p-2 bg-light">
+                  <span class="fw-bold fs-6 final-comp-badge" id="c1_final_display">—</span>
+                </td>
+              </tr>
+
+              <!-- Competencia 2 -->
+              <tr>
+                <td class="text-start ps-3">
+                  <div class="fw-bold text-dark">Competencia 2</div>
+                  <small class="text-muted">Pensamiento Lógico / Crítico</small>
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center fw-semibold grade-ord"
+                         name="c2_score" id="c2_score" placeholder="0-100" required
+                         value="{{ ev_to_edit.c2_score if ev_to_edit and ev_to_edit.c2_score is not none else (ev_to_edit.score if ev_to_edit else '') }}">
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center grade-rp"
+                         name="c2_rp" id="c2_rp" placeholder="Opcional RP2"
+                         value="{{ ev_to_edit.c2_rp if ev_to_edit and ev_to_edit.c2_rp is not none else '' }}">
+                </td>
+                <td class="p-2 bg-light">
+                  <span class="fw-bold fs-6 final-comp-badge" id="c2_final_display">—</span>
+                </td>
+              </tr>
+
+              <!-- Competencia 3 -->
+              <tr>
+                <td class="text-start ps-3">
+                  <div class="fw-bold text-dark">Competencia 3</div>
+                  <small class="text-muted">Resolución de Problemas / Científica</small>
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center fw-semibold grade-ord"
+                         name="c3_score" id="c3_score" placeholder="0-100" required
+                         value="{{ ev_to_edit.c3_score if ev_to_edit and ev_to_edit.c3_score is not none else (ev_to_edit.score if ev_to_edit else '') }}">
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center grade-rp"
+                         name="c3_rp" id="c3_rp" placeholder="Opcional RP3"
+                         value="{{ ev_to_edit.c3_rp if ev_to_edit and ev_to_edit.c3_rp is not none else '' }}">
+                </td>
+                <td class="p-2 bg-light">
+                  <span class="fw-bold fs-6 final-comp-badge" id="c3_final_display">—</span>
+                </td>
+              </tr>
+
+              <!-- Competencia 4 -->
+              <tr>
+                <td class="text-start ps-3">
+                  <div class="fw-bold text-dark">Competencia 4</div>
+                  <small class="text-muted">Ética y Ciudadana / Actitudinal</small>
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center fw-semibold grade-ord"
+                         name="c4_score" id="c4_score" placeholder="0-100" required
+                         value="{{ ev_to_edit.c4_score if ev_to_edit and ev_to_edit.c4_score is not none else (ev_to_edit.score if ev_to_edit else '') }}">
+                </td>
+                <td class="p-2">
+                  <input type="number" step="0.5" min="0" max="100" class="form-control text-center grade-rp"
+                         name="c4_rp" id="c4_rp" placeholder="Opcional RP4"
+                         value="{{ ev_to_edit.c4_rp if ev_to_edit and ev_to_edit.c4_rp is not none else '' }}">
+                </td>
+                <td class="p-2 bg-light">
+                  <span class="fw-bold fs-6 final-comp-badge" id="c4_final_display">—</span>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot class="table-light">
+              <tr class="fw-bold">
+                <td class="text-start ps-3">RESUMEN DEL PERÍODO:</td>
+                <td>
+                  <span id="promedio_ord_display" class="badge bg-secondary rounded-pill px-3 py-2 fs-6">—</span>
+                  <div class="text-muted small fw-normal mt-1">Promedio Ordinario</div>
+                </td>
+                <td>
+                  <span id="rp_count_display" class="badge bg-warning text-dark rounded-pill px-3 py-2 fs-6">0 en RP</span>
+                  <div class="text-muted small fw-normal mt-1">Competencias en RP</div>
+                </td>
+                <td class="bg-primary-subtle">
+                  <span id="promedio_final_display" class="badge bg-primary rounded-pill px-3 py-2 fs-6">—</span>
+                  <div class="text-primary small fw-semibold mt-1" id="estado_periodo_display">Pendiente</div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
 
+      <!-- Observación Pedagógica -->
       <div class="mb-4">
-        <label class="form-label fw-semibold">Observacion <span class="text-muted">(opcional)</span></label>
+        <label class="form-label fw-semibold">Observación Pedagógica del Docente <span class="text-muted">(opcional)</span></label>
         <textarea name="observaciones" class="form-control rounded-3" rows="2"
-                  placeholder="Ej: Progreso notable en comprension lectora.">{{ ev_to_edit.observaciones if ev_to_edit and ev_to_edit.observaciones else '' }}</textarea>
+                  placeholder="Ej: Progreso satisfactorio en los indicadores evaluados. Reforzó competencias mediante actividades de recuperación.">{{ ev_to_edit.observaciones if ev_to_edit and ev_to_edit.observaciones else '' }}</textarea>
       </div>
 
-      <div class="d-flex gap-2 justify-content-end">
+      <!-- Botones de Acción -->
+      <div class="d-flex gap-2 justify-content-end align-items-center">
         <a href="{{ url_for('evaluation.index') }}" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
-        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-semibold shadow-sm">
-          <i class="bi bi-cloud-check-fill me-1"></i> Guardar
+        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-semibold shadow-sm" id="btnGuardarEvaluacion">
+          <i class="bi bi-cloud-check-fill me-1"></i> Guardar Calificaciones
         </button>
       </div>
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const inputsOrd = [
+    document.getElementById('c1_score'),
+    document.getElementById('c2_score'),
+    document.getElementById('c3_score'),
+    document.getElementById('c4_score')
+  ];
+
+  const inputsRP = [
+    document.getElementById('c1_rp'),
+    document.getElementById('c2_rp'),
+    document.getElementById('c3_rp'),
+    document.getElementById('c4_rp')
+  ];
+
+  const badgesFinal = [
+    document.getElementById('c1_final_display'),
+    document.getElementById('c2_final_display'),
+    document.getElementById('c3_final_display'),
+    document.getElementById('c4_final_display')
+  ];
+
+  const promOrdEl = document.getElementById('promedio_ord_display');
+  const rpCountEl = document.getElementById('rp_count_display');
+  const promFinalEl = document.getElementById('promedio_final_display');
+  const estadoEl = document.getElementById('estado_periodo_display');
+
+  function calculateAll() {
+    let ordSum = 0;
+    let ordCount = 0;
+    let finalSum = 0;
+    let finalCount = 0;
+    let rpCount = 0;
+
+    for (let i = 0; i < 4; i++) {
+      const ordVal = parseFloat(inputsOrd[i].value);
+      const rpVal = parseFloat(inputsRP[i].value);
+
+      const hasOrd = !isNaN(ordVal) && ordVal >= 0 && ordVal <= 100;
+      const hasRp = !isNaN(rpVal) && rpVal >= 0 && rpVal <= 100;
+
+      // Resaltado si la ordinaria es menor a 70
+      if (hasOrd) {
+        ordSum += ordVal;
+        ordCount++;
+        if (ordVal < 70) {
+          inputsOrd[i].classList.add('border-warning', 'bg-warning-subtle');
+          if (!hasRp) {
+            inputsRP[i].placeholder = '⚠ Requiere RP (<70)';
+            inputsRP[i].classList.add('border-warning');
+          } else {
+            inputsRP[i].classList.remove('border-warning');
+          }
+        } else {
+          inputsOrd[i].classList.remove('border-warning', 'bg-warning-subtle');
+          inputsRP[i].placeholder = 'Opcional';
+          inputsRP[i].classList.remove('border-warning');
+        }
+      }
+
+      let compFinal = null;
+      if (hasOrd) {
+        if (hasRp) {
+          compFinal = Math.max(ordVal, rpVal);
+          rpCount++;
+        } else {
+          compFinal = ordVal;
+        }
+        finalSum += compFinal;
+        finalCount++;
+
+        badgesFinal[i].innerText = compFinal;
+        if (compFinal >= 70) {
+          badgesFinal[i].className = 'badge bg-success rounded-pill px-3 py-1';
+        } else {
+          badgesFinal[i].className = 'badge bg-danger rounded-pill px-3 py-1';
+        }
+      } else {
+        badgesFinal[i].innerText = '—';
+        badgesFinal[i].className = 'fw-bold fs-6 text-muted';
+      }
+    }
+
+    // Promedio Ordinario
+    if (ordCount > 0) {
+      const avgOrd = (ordSum / ordCount).toFixed(1);
+      promOrdEl.innerText = avgOrd;
+      promOrdEl.className = 'badge ' + (avgOrd >= 70 ? 'bg-success' : 'bg-warning text-dark') + ' rounded-pill px-3 py-2 fs-6';
+    } else {
+      promOrdEl.innerText = '—';
+      promOrdEl.className = 'badge bg-secondary rounded-pill px-3 py-2 fs-6';
+    }
+
+    // Cantidad en RP
+    rpCountEl.innerText = rpCount + ' en RP';
+
+    // Promedio Final
+    if (finalCount > 0) {
+      const avgFinal = (finalSum / finalCount).toFixed(1);
+      promFinalEl.innerText = avgFinal;
+      if (avgFinal >= 70) {
+        promFinalEl.className = 'badge bg-success rounded-pill px-3 py-2 fs-6';
+        estadoEl.innerText = '✓ Aprobado (' + avgFinal + ' pts)';
+        estadoEl.className = 'text-success small fw-bold mt-1';
+      } else {
+        promFinalEl.className = 'badge bg-danger rounded-pill px-3 py-2 fs-6';
+        estadoEl.innerText = '⚠ En Recuperación (< 70 pts)';
+        estadoEl.className = 'text-danger small fw-bold mt-1';
+      }
+    } else {
+      promFinalEl.innerText = '—';
+      promFinalEl.className = 'badge bg-secondary rounded-pill px-3 py-2 fs-6';
+      estadoEl.innerText = 'Pendiente de notas';
+      estadoEl.className = 'text-muted small fw-normal mt-1';
+    }
+  }
+
+  inputsOrd.forEach(input => input.addEventListener('input', calculateAll));
+  inputsRP.forEach(input => input.addEventListener('input', calculateAll));
+
+  // Cálculo inicial al cargar
+  calculateAll();
+});
+</script>
 {% endblock %}

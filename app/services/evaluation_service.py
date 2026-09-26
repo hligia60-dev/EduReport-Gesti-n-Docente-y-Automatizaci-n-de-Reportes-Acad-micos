@@ -1,4 +1,4 @@
-﻿from app import db
+from app import db
 from app.models.academic import Student, Section, GradeLevel, Cycle
 from app.models.evaluation import Asignatura, Evaluacion, Seguimiento, Reporte
 
@@ -35,14 +35,62 @@ def get_evaluaciones_by_period(student_id, period):
 def get_evaluacion(eval_id):
     return Evaluacion.query.get_or_404(eval_id)
 
-def save_evaluacion(student_id, asignatura_id, period, score,
+def save_evaluacion(student_id, asignatura_id, period, score=None,
                     calificacion_recuperacion=None, observaciones=None,
-                    indicator_id=None, eval_id=None):
-    """Crea o actualiza una evaluación."""
-    score = float(score)
-    cal_rec = float(calificacion_recuperacion) if calificacion_recuperacion is not None and str(calificacion_recuperacion).strip() != '' else None
-    cal_final = max(score, cal_rec) if cal_rec is not None else score
-    aprobado  = cal_final >= 70
+                    indicator_id=None, eval_id=None,
+                    c1_score=None, c2_score=None, c3_score=None, c4_score=None,
+                    c1_rp=None, c2_rp=None, c3_rp=None, c4_rp=None):
+    """Crea o actualiza una evaluación con las 4 competencias ordinarias y sus 4 casillas de RP."""
+    
+    # Procesar calificaciones ordinarias por competencia
+    def _to_float_or_none(val):
+        if val is None or str(val).strip() == '':
+            return None
+        try:
+            return float(val)
+        except (ValueError, TypeError):
+            return None
+
+    c1_s = _to_float_or_none(c1_score)
+    c2_s = _to_float_or_none(c2_score)
+    c3_s = _to_float_or_none(c3_score)
+    c4_s = _to_float_or_none(c4_score)
+
+    # Si se pasaron las 4 notas ordinarias
+    if c1_s is not None or c2_s is not None or c3_s is not None or c4_s is not None:
+        c1_s = c1_s if c1_s is not None else 0.0
+        c2_s = c2_s if c2_s is not None else 0.0
+        c3_s = c3_s if c3_s is not None else 0.0
+        c4_s = c4_s if c4_s is not None else 0.0
+        score = round((c1_s + c2_s + c3_s + c4_s) / 4.0, 1)
+    else:
+        score = float(score) if score is not None else 0.0
+        c1_s = c2_s = c3_s = c4_s = score
+
+    # Procesar las 4 casillas de RP
+    c1_r = _to_float_or_none(c1_rp)
+    c2_r = _to_float_or_none(c2_rp)
+    c3_r = _to_float_or_none(c3_rp)
+    c4_r = _to_float_or_none(c4_rp)
+
+    # Calcular nota final por cada competencia (si tiene RP y es mayor, se toma la RP)
+    f1 = max(c1_s, c1_r) if c1_r is not None else c1_s
+    f2 = max(c2_s, c2_r) if c2_r is not None else c2_s
+    f3 = max(c3_s, c3_r) if c3_r is not None else c3_s
+    f4 = max(c4_s, c4_r) if c4_r is not None else c4_s
+
+    cal_final = round((f1 + f2 + f3 + f4) / 4.0, 1)
+
+    # Promedio o registro de recuperación pedagógica global
+    rps = [r for r in (c1_r, c2_r, c3_r, c4_r) if r is not None]
+    if rps:
+        cal_rec = round(sum(rps) / len(rps), 1)
+    else:
+        cal_rec = _to_float_or_none(calificacion_recuperacion)
+        if cal_rec is not None:
+            cal_final = max(score, cal_rec)
+
+    aprobado = cal_final >= 70
 
     if eval_id:
         ev = Evaluacion.query.get_or_404(eval_id)
@@ -54,15 +102,26 @@ def save_evaluacion(student_id, asignatura_id, period, score,
             ev = Evaluacion(student_id=student_id, asignatura_id=asignatura_id, period=period)
             db.session.add(ev)
 
-    ev.score                    = score
+    ev.c1_score = c1_s
+    ev.c2_score = c2_s
+    ev.c3_score = c3_s
+    ev.c4_score = c4_s
+
+    ev.c1_rp = c1_r
+    ev.c2_rp = c2_r
+    ev.c3_rp = c3_r
+    ev.c4_rp = c4_r
+
+    ev.score = score
     ev.calificacion_recuperacion = cal_rec
     ev.calificacion_final_periodo = cal_final
-    ev.aprobado                 = aprobado
-    ev.observaciones            = observaciones
+    ev.aprobado = aprobado
+    ev.observaciones = observaciones
     if indicator_id:
         ev.indicator_id = indicator_id
     db.session.commit()
     return ev
+
 
 def delete_evaluacion(eval_id):
     ev = Evaluacion.query.get_or_404(eval_id)
