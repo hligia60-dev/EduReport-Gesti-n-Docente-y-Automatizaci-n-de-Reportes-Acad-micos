@@ -1,0 +1,366 @@
+﻿{% extends 'base.html' %}
+{% block title %}Dashboard — EduReport{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Encabezado -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1"><i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard Academico</h1>
+      <p class="text-muted mb-0">Metricas en tiempo real &bull; Asistencia &bull; Rendimiento &bull; Seguimiento.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('students.new_student') }}" class="btn btn-primary rounded-pill px-3 shadow-sm">
+        <i class="bi bi-person-plus-fill me-1"></i> Estudiante
+      </a>
+      <a href="{{ url_for('attendance.register_daily') }}" class="btn btn-success rounded-pill px-3 shadow-sm">
+        <i class="bi bi-check2-square me-1"></i> Pase de Lista
+      </a>
+      <a href="{{ url_for('evaluation.register') }}" class="btn btn-outline-primary rounded-pill px-3 shadow-sm">
+        <i class="bi bi-clipboard2-plus me-1"></i> Calificacion
+      </a>
+      <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm">
+        <i class="bi bi-file-earmark-text me-1"></i> Reportes
+      </a>
+    </div>
+  </div>
+
+  <!-- Fila 1: Metricas principales (8 tarjetas) -->
+  <div class="row g-3 mb-4">
+    <!-- Total estudiantes -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('students.list_students') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Total Estudiantes</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1">{{ total_students }}</h2>
+              <small class="text-primary fw-medium">1.er y 2.do Ciclo</small>
+            </div>
+            <div class="card-icon icon-blue mb-0"><i class="bi bi-people-fill"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Promedio academico -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('evaluation.index') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Promedio Academico</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1 {{ 'text-success' if acad_stats.promedio_global >= 70 else 'text-danger' }}">
+                {{ acad_stats.promedio_global }}
+              </h2>
+              <small class="{{ 'text-success' if acad_stats.promedio_global >= 70 else 'text-danger' }} fw-medium">
+                Minimo: 70 puntos
+              </small>
+            </div>
+            <div class="card-icon icon-emerald mb-0"><i class="bi bi-bar-chart-fill"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Asistencia global -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('attendance.index') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">% Asistencia</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1 {{ 'text-success' if att_stats.porcentaje_global >= 85 else 'text-warning' }}">
+                {{ att_stats.porcentaje_global }}%
+              </h2>
+              <small class="text-muted fw-medium">{{ att_stats.total_records }} registros</small>
+            </div>
+            <div class="card-icon icon-sky mb-0"><i class="bi bi-calendar-check-fill"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Alertas 3 ausencias -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('attendance.alerts') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift {{ 'border-danger border-2' if total_alerts > 0 else '' }}">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Alertas (≥3 Ausencias)</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1 {{ 'text-danger' if total_alerts > 0 else 'text-muted' }}">{{ total_alerts }}</h2>
+              <small class="{{ 'text-danger' if total_alerts > 0 else 'text-success' }} fw-medium">
+                {{ 'Requieren atencion' if total_alerts > 0 else 'Sin alertas activas' }}
+              </small>
+            </div>
+            <div class="card-icon icon-rose mb-0"><i class="bi bi-bell-fill"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- En seguimiento -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('seguimiento.index') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">En Seguimiento</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1">{{ total_segs }}</h2>
+              <small class="{{ 'text-warning' if segs_abiertos > 0 else 'text-muted' }} fw-medium">
+                {{ segs_abiertos }} abiertos
+              </small>
+            </div>
+            <div class="card-icon icon-amber mb-0"><i class="bi bi-journal-text"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Con progreso -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('evaluation.index') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Con Progreso</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1 text-success">{{ acad_stats.con_progreso_count }}</h2>
+              <small class="text-success fw-medium">Promedio ≥ 70</small>
+            </div>
+            <div class="card-icon icon-emerald mb-0"><i class="bi bi-graph-up-arrow"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Bajo rendimiento -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('evaluation.index') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift {{ 'border-warning' if acad_stats.bajo_rendimiento_count > 0 else '' }}">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Bajo Rendimiento</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1 {{ 'text-warning' if acad_stats.bajo_rendimiento_count > 0 else 'text-muted' }}">
+                {{ acad_stats.bajo_rendimiento_count }}
+              </h2>
+              <small class="{{ 'text-warning' if acad_stats.bajo_rendimiento_count > 0 else 'text-muted' }} fw-medium">
+                Promedio &lt; 70
+              </small>
+            </div>
+            <div class="card-icon icon-amber mb-0"><i class="bi bi-graph-down-arrow"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Reportes generados -->
+    <div class="col-sm-6 col-xl-3">
+      <a href="{{ url_for('reports.index') }}" class="text-decoration-none">
+        <div class="modern-card p-4 h-100 hover-lift">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-muted small fw-semibold text-uppercase">Reportes Generados</span>
+              <h2 class="fw-bold display-6 mb-0 mt-1">{{ total_reportes }}</h2>
+              <small class="text-muted fw-medium">Informes y PDF</small>
+            </div>
+            <div class="card-icon icon-purple mb-0"><i class="bi bi-file-earmark-pdf-fill"></i></div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Fila 2: Graficos -->
+  <div class="row g-4 mb-4">
+    <!-- Grafico: Asistencia P/T/A/E -->
+    <div class="col-lg-4">
+      <div class="modern-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0">Asistencia Global</h5>
+          <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2">
+            {{ att_stats.porcentaje_global }}%
+          </span>
+        </div>
+        {% if att_stats.total_records > 0 %}
+        <div style="position:relative;height:200px;">
+          <canvas id="attPie"></canvas>
+        </div>
+        <div class="d-flex justify-content-around text-center mt-3 pt-3 border-top small">
+          <div><span class="d-block fw-bold text-success">{{ att_stats.total_present }}</span><span class="text-muted">P</span></div>
+          <div><span class="d-block fw-bold text-warning">{{ att_stats.total_tardy }}</span><span class="text-muted">T</span></div>
+          <div><span class="d-block fw-bold text-danger">{{ att_stats.total_absent }}</span><span class="text-muted">A</span></div>
+          <div><span class="d-block fw-bold text-info">{{ att_stats.total_excused }}</span><span class="text-muted">E</span></div>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-calendar-x fs-2 d-block mb-2"></i>
+          Sin datos de asistencia.
+          <a href="{{ url_for('attendance.seed_demo') }}" class="d-block mt-2 btn btn-sm btn-outline-secondary rounded-pill">Cargar Demo</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Grafico: Rendimiento vs Alertas por Ciclo -->
+    <div class="col-lg-8">
+      <div class="modern-card p-4 h-100">
+        <h5 class="fw-bold mb-3">Estudiantes por Ciclo — Matricula vs Alertas</h5>
+        <div style="position:relative;height:220px;">
+          <canvas id="cycleBar"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fila 3: Alertas activas + accesos rapidos -->
+  <div class="row g-4">
+    <!-- Bandeja de alertas activas -->
+    <div class="col-lg-7">
+      <div class="modern-card p-0 overflow-hidden h-100">
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0 text-danger">
+            <i class="bi bi-bell-fill me-2"></i>Alertas Activas — Regla 3 Ausencias
+          </h5>
+          <a href="{{ url_for('attendance.alerts') }}" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+            Ver todas <span class="badge bg-danger ms-1">{{ total_alerts }}</span>
+          </a>
+        </div>
+        {% if alerts %}
+        <ul class="list-group list-group-flush">
+          {% for item in alerts[:5] %}
+          <li class="list-group-item px-4 py-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div>
+                <a href="{{ url_for('attendance.student_detail', student_id=item.student.id) }}"
+                   class="fw-semibold text-decoration-none">{{ item.student.full_name }}</a>
+                <div class="small text-muted">
+                  {{ item.grade.name }} · {{ item.section.nombre or item.section.name }}
+                  {% if item.student.tutor_phone %}
+                  &bull; <i class="bi bi-telephone-fill text-success"></i> {{ item.student.tutor_phone }}
+                  {% endif %}
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 badge-pulse">{{ item.absences_count }} A</span>
+                <a href="{{ url_for('reports.attendance_report', student_id=item.student.id) }}"
+                   class="btn btn-sm btn-warning rounded-pill px-2" target="_blank" title="Generar informe">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                </a>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="p-5 text-center text-muted">
+          <i class="bi bi-check-circle-fill text-success fs-1 d-block mb-2"></i>
+          <strong class="text-success">Sin alertas activas.</strong><br>
+          Ningun estudiante ha acumulado 3 o mas ausencias.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Accesos rapidos -->
+    <div class="col-lg-5">
+      <div class="modern-card p-4 h-100">
+        <h5 class="fw-bold mb-3"><i class="bi bi-grid-fill me-2 text-primary"></i>Accesos Rapidos</h5>
+        <div class="row g-2">
+          <div class="col-6">
+            <a href="{{ url_for('students.list_students') }}" class="btn btn-outline-primary w-100 rounded-3 py-3 text-start">
+              <i class="bi bi-people-fill d-block fs-4 mb-1"></i>
+              <span class="small fw-semibold">Estudiantes</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('attendance.index') }}" class="btn btn-outline-success w-100 rounded-3 py-3 text-start">
+              <i class="bi bi-calendar-check-fill d-block fs-4 mb-1"></i>
+              <span class="small fw-semibold">Asistencia</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('evaluation.index') }}" class="btn btn-outline-info w-100 rounded-3 py-3 text-start">
+              <i class="bi bi-clipboard2-data-fill d-block fs-4 mb-1"></i>
+              <span class="small fw-semibold">Evaluaciones</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('seguimiento.index') }}" class="btn btn-outline-warning w-100 rounded-3 py-3 text-start">
+              <i class="bi bi-journal-text d-block fs-4 mb-1"></i>
+              <span class="small fw-semibold">Seguimiento</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('reports.index') }}" class="btn btn-outline-danger w-100 rounded-3 py-3 text-start">
+              <i class="bi bi-file-earmark-pdf-fill d-block fs-4 mb-1"></i>
+              <span class="small fw-semibold">Reportes</span>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('attendance.alerts') }}" class="btn btn-outline-secondary w-100 rounded-3 py-3 text-start">
+              <i class="bi bi-bell-fill d-block fs-4 mb-1"></i>
+              <span class="small fw-semibold">Alertas</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Barra de progreso recuperacion -->
+        {% if acad_stats.total_evaluaciones > 0 %}
+        <div class="mt-4 pt-3 border-top">
+          <div class="d-flex justify-content-between small mb-1">
+            <span class="fw-semibold">Aprobadas</span>
+            <span>{{ acad_stats.aprobadas }} / {{ acad_stats.total_evaluaciones }}</span>
+          </div>
+          <div class="progress rounded-pill mb-2" style="height:8px;">
+            <div class="progress-bar bg-success" style="width:{{ ((acad_stats.aprobadas / acad_stats.total_evaluaciones) * 100) | round | int }}%"></div>
+          </div>
+          <div class="d-flex justify-content-between small mb-1">
+            <span class="fw-semibold text-warning">En Recuperacion</span>
+            <span class="text-warning">{{ acad_stats.en_recuperacion }}</span>
+          </div>
+          <div class="progress rounded-pill" style="height:8px;">
+            <div class="progress-bar bg-warning" style="width:{{ ((acad_stats.en_recuperacion / acad_stats.total_evaluaciones) * 100) | round | int }}%"></div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  {% if att_stats.total_records > 0 %}
+  new Chart(document.getElementById('attPie').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['P – Presente', 'T – Tardanza', 'A – Ausente', 'E – Excusa'],
+      datasets: [{ data: [{{ att_stats.total_present }}, {{ att_stats.total_tardy }}, {{ att_stats.total_absent }}, {{ att_stats.total_excused }}],
+        backgroundColor: ['#10b981','#f59e0b','#ef4444','#3b82f6'], hoverOffset:8, borderWidth:2 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'bottom', labels:{boxWidth:12}} } }
+  });
+  {% endif %}
+
+  new Chart(document.getElementById('cycleBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: {{ cycle_labels | tojson }},
+      datasets: [
+        { label:'Matriculados',      data: {{ cycle_students | tojson }}, backgroundColor:'#3b82f6', borderRadius:8 },
+        { label:'Con Alertas (A≥3)', data: {{ cycle_alerts  | tojson }}, backgroundColor:'#ef4444', borderRadius:8 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      scales:{ y:{beginAtZero:true, ticks:{stepSize:1}} },
+      plugins:{ legend:{position:'bottom'} }
+    }
+  });
+});
+</script>
+{% endblock %}

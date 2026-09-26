@@ -1,0 +1,179 @@
+﻿{% extends 'base.html' %}
+{% block title %}Pase de Lista — EduReport{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Encabezado -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1"><i class="bi bi-check2-square text-primary me-2"></i>Pase de Lista Diario</h1>
+      <p class="text-muted mb-0">Selecciona la sección y la fecha, luego registra el estado (P/T/A/E) de cada estudiante.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('attendance.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
+        <i class="bi bi-arrow-left me-1"></i> Volver
+      </a>
+      <a href="{{ url_for('attendance.alerts') }}" class="btn btn-outline-danger rounded-pill px-3">
+        <i class="bi bi-bell-fill me-1"></i> Alertas
+      </a>
+    </div>
+  </div>
+
+  <!-- Selector de sección y fecha -->
+  <div class="modern-card p-4 mb-4">
+    <form method="GET" action="{{ url_for('attendance.register_daily') }}" class="row g-3 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label fw-semibold">Sección / Aula</label>
+        <select name="section_id" id="section_id" class="form-select rounded-3">
+          {% for s in sections %}
+          <option value="{{ s.id }}" {% if selected_section and selected_section.id == s.id %}selected{% endif %}>
+            {{ s.nombre or s.name }} — {{ s.grado or '' }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Fecha</label>
+        <input type="date" name="date" id="pase_date" class="form-control rounded-3" value="{{ selected_date }}">
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100 rounded-pill">
+          <i class="bi bi-funnel-fill me-1"></i> Cargar Estudiantes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabla de pase de lista -->
+  {% if students_data %}
+  <form method="POST" action="{{ url_for('attendance.register_daily') }}">
+    <input type="hidden" name="section_id" value="{{ selected_section.id }}">
+    <input type="hidden" name="date" value="{{ selected_date }}">
+
+    <div class="modern-card p-0 mb-4 overflow-hidden">
+      <div class="p-4 pb-3 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div>
+          <h5 class="fw-bold mb-0">
+            <i class="bi bi-people-fill me-2 text-primary"></i>
+            {{ selected_section.nombre or selected_section.name }}
+            <span class="text-muted fw-normal">— {{ selected_section.grado or '' }}</span>
+          </h5>
+          <small class="text-muted">Fecha: <strong>{{ selected_date_display }}</strong> &bull; {{ students_data|length }} estudiantes</small>
+        </div>
+        <!-- Botones de selección rápida -->
+        <div class="d-flex gap-2 flex-wrap">
+          <button type="button" class="btn btn-sm btn-success rounded-pill" onclick="setAll('Presente')">
+            <i class="bi bi-check-all me-1"></i> Todos P
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onclick="setAll('Tardanza')">
+            Todos T
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light small text-uppercase fw-semibold">
+            <tr>
+              <th style="width:50px;">#</th>
+              <th>Estudiante</th>
+              <th>RNE</th>
+              <th class="text-center" style="width:300px;">Estado de Asistencia</th>
+              <th>Observación</th>
+              <th class="text-center">Faltas</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in students_data %}
+            {% set s = item.student %}
+            <tr class="{{ 'table-danger' if item.has_alert else '' }}">
+              <td class="text-muted small">{{ loop.index }}</td>
+              <td>
+                <a href="{{ url_for('students.detail', student_id=s.id) }}" class="text-decoration-none fw-semibold">
+                  {{ s.full_name }}
+                </a>
+                {% if item.has_alert %}
+                <span class="badge bg-danger ms-1 badge-pulse" title="≥3 ausencias"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                {% endif %}
+              </td>
+              <td><code class="small">{{ s.registration_number }}</code></td>
+              <td>
+                <div class="d-flex gap-1 justify-content-center flex-wrap">
+                  {% for code, label, color in [('Presente','P','success'),('Tardanza','T','warning'),('Ausente','A','danger'),('Excusa','E','info')] %}
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input visually-hidden" type="radio"
+                           name="status_{{ s.id }}" id="status_{{ s.id }}_{{ code }}"
+                           value="{{ code }}"
+                           {% if item.current_status == code or (not item.current_status and code == 'Presente') %}checked{% endif %}>
+                    <label class="btn btn-sm btn-outline-{{ color }} fw-bold px-3"
+                           for="status_{{ s.id }}_{{ code }}"
+                           data-code="{{ code }}"
+                           onclick="styleRadio(this)">{{ label }}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </td>
+              <td>
+                <input type="text" name="note_{{ s.id }}" class="form-control form-control-sm rounded-3"
+                       placeholder="Opcional..." value="{{ item.current_note or '' }}" style="min-width:140px;">
+              </td>
+              <td class="text-center">
+                {% if item.total_absences > 0 %}
+                <span class="badge {{ 'bg-danger' if item.total_absences >= 3 else 'bg-warning text-dark' }} rounded-pill px-2">
+                  {{ item.total_absences }}
+                </span>
+                {% else %}
+                <span class="text-muted small">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="p-4 pt-3 border-top d-flex justify-content-end gap-2">
+        <a href="{{ url_for('attendance.register_daily', section_id=selected_section.id) }}"
+           class="btn btn-outline-secondary rounded-pill px-4">
+          Cancelar
+        </a>
+        <button type="submit" class="btn btn-success rounded-pill px-5 shadow-sm fw-semibold">
+          <i class="bi bi-cloud-check-fill me-2"></i> Guardar Asistencia
+        </button>
+      </div>
+    </div>
+  </form>
+  {% else %}
+  <div class="modern-card p-5 text-center text-muted">
+    <i class="bi bi-people fs-1 d-block mb-3"></i>
+    <h5>Selecciona una sección para cargar el pase de lista.</h5>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function setAll(status) {
+  document.querySelectorAll('input[type=radio][value="' + status + '"]').forEach(r => {
+    r.checked = true;
+    const lbl = r.nextElementSibling;
+    if (lbl) styleRadio(lbl);
+  });
+}
+// Resalta la etiqueta activa al marcar un radio
+document.querySelectorAll('input[type=radio]').forEach(r => {
+  r.addEventListener('change', () => {
+    const lbl = r.nextElementSibling;
+    if (lbl) styleRadio(lbl);
+  });
+  // Init on load
+  if (r.checked) { const lbl = r.nextElementSibling; if (lbl) styleRadio(lbl); }
+});
+function styleRadio(lbl) {
+  const group = lbl.closest('td').querySelectorAll('label');
+  group.forEach(l => l.classList.remove('active'));
+  lbl.classList.add('active');
+}
+</script>
+{% endblock %}

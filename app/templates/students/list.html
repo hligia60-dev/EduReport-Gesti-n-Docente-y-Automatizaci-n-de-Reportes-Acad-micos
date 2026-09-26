@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+
+{% block title %}EduReport - Módulo de Estudiantes (Matrícula y Expedientes){% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Encabezado Principal -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-2 border-bottom">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill">
+                    <i class="bi bi-people-fill me-1"></i> Control de Matrícula Escolar
+                </span>
+                <span class="badge bg-light text-muted border">Año 2026-2027</span>
+            </div>
+            <h2 class="fw-bold mb-0">Gestión de Estudiantes</h2>
+            <small class="text-secondary">Expedientes académicos del Nivel Secundario: Primer Ciclo (1.º, 2.º y 3.º) y Segundo Ciclo (4.º, 5.º y 6.º)</small>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('students.new_student') }}" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm" id="btnNuevoEstudiante">
+                <i class="bi bi-person-plus-fill me-1"></i> + Registrar Nuevo Estudiante
+            </a>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Resumen Estadístico -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="modern-card p-3 border">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold d-block">Total Estudiantes</span>
+                        <h3 class="fw-bold mb-0 text-dark">{{ total_count }}</h3>
+                    </div>
+                    <div class="card-icon icon-blue mb-0" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="modern-card p-3 border">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold d-block">Primer Ciclo (1.º - 3.º)</span>
+                        <h3 class="fw-bold mb-0 text-primary">{{ primer_ciclo_count }}</h3>
+                    </div>
+                    <div class="card-icon icon-sky mb-0" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="modern-card p-3 border">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold d-block">Segundo Ciclo (4.º - 6.º)</span>
+                        <h3 class="fw-bold mb-0 text-success">{{ segundo_ciclo_count }}</h3>
+                    </div>
+                    <div class="card-icon icon-emerald mb-0" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="modern-card p-3 border">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold d-block">Alertas (≥ 3 Faltas)</span>
+                        <h3 class="fw-bold mb-0 text-danger">{{ alertas_count }}</h3>
+                    </div>
+                    <div class="card-icon icon-rose mb-0" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Filtros y Búsqueda -->
+    <div class="modern-card p-3 p-md-4 mb-4 bg-white border">
+        <form method="GET" action="{{ url_for('students.list_students') }}" class="row g-3 align-items-end">
+            <!-- Búsqueda textual -->
+            <div class="col-md-4">
+                <label for="inputSearch" class="form-label small fw-semibold text-muted mb-1">
+                    <i class="bi bi-search me-1"></i> Buscar por Nombre, Apellido o RNE:
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="q" id="inputSearch" class="form-control border-start-0" 
+                           placeholder="Ej. Adon, Rosario, RNE-2026..." value="{{ search_query }}">
+                </div>
+            </div>
+
+            <!-- Filtro Ciclo -->
+            <div class="col-sm-6 col-md-2">
+                <label for="selectCycle" class="form-label small fw-semibold text-muted mb-1">Ciclo Curricular:</label>
+                <select name="cycle_id" id="selectCycle" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">Todos los Ciclos</option>
+                    {% for c in cycles %}
+                        <option value="{{ c.id }}" {% if selected_cycle == c.id %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtro Grado -->
+            <div class="col-sm-6 col-md-2">
+                <label for="selectGrade" class="form-label small fw-semibold text-muted mb-1">Grado:</label>
+                <select name="grade_id" id="selectGrade" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">Todos los Grados</option>
+                    {% for g in grades %}
+                        <option value="{{ g.id }}" {% if selected_grade == g.id %}selected{% endif %}>{{ g.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtro Sección / Aula -->
+            <div class="col-sm-6 col-md-2">
+                <label for="selectSection" class="form-label small fw-semibold text-muted mb-1">Aula / Sección:</label>
+                <select name="section_id" id="selectSection" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">Todas las Aulas</option>
+                    {% for s in sections %}
+                        <option value="{{ s.id }}" {% if selected_section == s.id %}selected{% endif %}>
+                            {{ s.nombre or s.full_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="col-sm-6 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm flex-grow-1 rounded-pill fw-semibold">
+                    <i class="bi bi-filter"></i> Filtrar
+                </button>
+                {% if search_query or selected_cycle or selected_grade or selected_section %}
+                    <a href="{{ url_for('students.list_students') }}" class="btn btn-outline-secondary btn-sm rounded-pill" title="Limpiar filtros">
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla de Estudiantes -->
+    <div class="modern-card border overflow-hidden">
+        <div class="d-flex align-items-center justify-content-between p-3 bg-light border-bottom">
+            <span class="fw-bold small text-secondary">
+                <i class="bi bi-table me-1"></i> Mostrando {{ students|length }} estudiante(s) registrado(s)
+            </span>
+            <span class="badge bg-secondary-subtle text-secondary small">
+                Ordenado por Grado y Apellidos
+            </span>
+        </div>
+
+        {% if students %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead class="table-light text-uppercase text-secondary" style="font-size: 0.76rem; letter-spacing: 0.04em;">
+                    <tr>
+                        <th style="width: 50px;" class="text-center">No.</th>
+                        <th>RNE / Matrícula</th>
+                        <th>Nombres y Apellidos</th>
+                        <th class="text-center">Sexo</th>
+                        <th>Grado & Sección</th>
+                        <th>Ciclo</th>
+                        <th>Condición</th>
+                        <th>Familiar / Contacto</th>
+                        <th class="text-center">Asistencia</th>
+                        <th class="text-end" style="min-width: 140px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in students %}
+                    <tr {% if s.has_absence_alert %}class="table-danger bg-opacity-25"{% endif %}>
+                        <!-- No. de Orden -->
+                        <td class="text-center text-muted fw-bold">
+                            {{ s.numero_orden or loop.index }}
+                        </td>
+
+                        <!-- RNE -->
+                        <td>
+                            <code class="fw-bold text-primary">{{ s.registration_number }}</code>
+                        </td>
+
+                        <!-- Nombre Completo -->
+                        <td>
+                            <a href="{{ url_for('students.detail', student_id=s.id) }}" class="fw-bold text-dark text-decoration-none hover-primary d-block">
+                                {{ s.full_name }}
+                            </a>
+                            {% if s.birth_date %}
+                                <small class="text-muted" style="font-size: 0.72rem;">
+                                    <i class="bi bi-calendar3 me-1"></i>Nac: {{ s.birth_date }}
+                                </small>
+                            {% endif %}
+                        </td>
+
+                        <!-- Sexo -->
+                        <td class="text-center">
+                            {% if s.gender == 'F' %}
+                                <span class="badge rounded-pill" style="background-color: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8;">F</span>
+                            {% else %}
+                                <span class="badge rounded-pill" style="background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;">M</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Grado y Sección -->
+                        <td>
+                            <span class="fw-semibold">{{ s.section.grado or s.section.grade_level.name }}</span>
+                            <span class="badge bg-light text-dark border ms-1">{{ s.section.name }}</span>
+                        </td>
+
+                        <!-- Ciclo -->
+                        <td>
+                            {% if s.section.grade_level.cycle.name == 'Primer Ciclo' %}
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill" style="font-size: 0.72rem;">Primer Ciclo</span>
+                            {% else %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill" style="font-size: 0.72rem;">Segundo Ciclo</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Condición Inicial -->
+                        <td>
+                            {% if s.condicion_inicial == 'Repitente' %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">Repitente</span>
+                            {% elif s.condicion_inicial == 'Aplazado' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">Aplazado</span>
+                            {% elif s.condicion_inicial == 'Reingreso' %}
+                                <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill">Reingreso</span>
+                            {% else %}
+                                <span class="badge bg-light text-secondary border rounded-pill">Promovido</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Familiar / Contacto -->
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="text-truncate fw-semibold" style="max-width: 160px;" title="{{ s.tutor_name }}">
+                                    {{ s.tutor_name or 'No registrado' }}
+                                </span>
+                                <div class="d-flex align-items-center gap-1 mt-1">
+                                    <code class="text-dark small">{{ s.tutor_phone or '(000)000-0000' }}</code>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 border-0"
+                                            data-bs-toggle="modal" data-bs-target="#editPhoneModal{{ s.id }}"
+                                            title="Editar número de teléfono">
+                                        <i class="bi bi-pencil-fill" style="font-size: 0.72rem;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Modal para editar teléfono -->
+                            <div class="modal fade" id="editPhoneModal{{ s.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                    <div class="modal-content border-0 shadow">
+                                        <div class="modal-header bg-light py-2">
+                                            <h6 class="modal-title fw-bold">Editar Teléfono</h6>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <form action="{{ url_for('students.edit_student_phone', student_id=s.id) }}" method="POST">
+                                            <input type="hidden" name="next" value="{{ request.full_path }}">
+                                            <div class="modal-body py-3">
+                                                <p class="small text-muted mb-2">Estudiante: <b>{{ s.full_name }}</b></p>
+                                                <label class="form-label small fw-semibold text-secondary mb-1">Número de teléfono:</label>
+                                                <input type="text" name="tutor_phone" class="form-control form-control-sm"
+                                                       value="{{ s.tutor_phone or '(000)000-0000' }}" required>
+                                            </div>
+                                            <div class="modal-footer py-2">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 fw-semibold">
+                                                    <i class="bi bi-check2 me-1"></i> Aceptar cambio
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Asistencias y Alertas -->
+                        <td class="text-center">
+                            {% if s.has_absence_alert %}
+                                <span class="badge bg-danger text-white rounded-pill px-2 py-1 badge-pulse" title="Alerta: {{ s.total_absences }} ausencias registradas">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ s.total_absences }} faltas
+                                </span>
+                            {% elif s.total_absences > 0 %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">
+                                    {{ s.total_absences }} faltas
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                    <i class="bi bi-check-circle me-1"></i> Normal
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Acciones -->
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('students.detail', student_id=s.id) }}" class="btn btn-outline-primary" title="Consultar Ficha">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('students.edit_student', student_id=s.id) }}" class="btn btn-outline-secondary" title="Editar Estudiante">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-outline-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteModal{{ s.id }}" 
+                                        title="Eliminar Estudiante">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+
+                            <!-- Modal de Confirmación de Eliminación -->
+                            <div class="modal fade text-start" id="deleteModal{{ s.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content rounded-4 border-0 shadow">
+                                        <div class="modal-header bg-danger text-white rounded-top-4">
+                                            <h5 class="modal-title fw-bold">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmar Eliminación
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <div class="modal-body p-4">
+                                            <p class="mb-2">¿Está seguro de que desea eliminar al estudiante:</p>
+                                            <div class="p-3 bg-light rounded-3 border mb-3">
+                                                <h6 class="fw-bold text-dark mb-1">{{ s.full_name }}</h6>
+                                                <small class="text-muted d-block"><strong>RNE:</strong> {{ s.registration_number }}</small>
+                                                <small class="text-muted d-block"><strong>Aula:</strong> {{ s.section.full_name }}</small>
+                                            </div>
+                                            <p class="text-danger small mb-0">
+                                                <i class="bi bi-info-circle me-1"></i> Esta acción eliminará permanentemente la matrícula y registros asociados.
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer bg-light rounded-bottom-4">
+                                            <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                                            <form method="POST" action="{{ url_for('students.delete_student', student_id=s.id) }}">
+                                                <button type="submit" class="btn btn-danger rounded-pill px-3 fw-bold">
+                                                    <i class="bi bi-trash me-1"></i> Sí, Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <!-- Estado Vacío -->
+        <div class="p-5 text-center">
+            <div class="card-icon icon-blue mx-auto mb-3" style="width: 64px; height: 64px; font-size: 2rem;">
+                <i class="bi bi-search"></i>
+            </div>
+            <h5 class="fw-bold mb-2">No se encontraron estudiantes</h5>
+            <p class="text-muted small mb-4">No hay alumnos que coincidan con los filtros de búsqueda seleccionados.</p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{{ url_for('students.list_students') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                    Restablecer Filtros
+                </a>
+                <a href="{{ url_for('students.new_student') }}" class="btn btn-primary rounded-pill px-4">
+                    + Registrar Estudiante
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

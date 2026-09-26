@@ -1,0 +1,171 @@
+﻿{% extends 'base.html' %}
+{% block title %}Calificaciones de {{ student.full_name }} — EduReport{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1"><i class="bi bi-clipboard2-data text-primary me-2"></i>Calificaciones</h1>
+      <p class="text-muted mb-0">{{ student.full_name }} &bull; <code>{{ student.registration_number }}</code>
+        &bull; {{ student.section.nombre or student.section.name }}</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('evaluation.register', student_id=student.id) }}" class="btn btn-primary rounded-pill px-4">
+        <i class="bi bi-plus-circle me-1"></i> Registrar Calificacion
+      </a>
+      <a href="{{ url_for('students.detail', student_id=student.id) }}" class="btn btn-outline-secondary rounded-pill px-3">
+        <i class="bi bi-person me-1"></i> Ficha
+      </a>
+      <a href="{{ url_for('seguimiento.ficha', student_id=student.id) }}" class="btn btn-outline-info rounded-pill px-3">
+        <i class="bi bi-journal-text me-1"></i> Seguimiento
+      </a>
+    </div>
+  </div>
+
+  <!-- Resumen estadistico -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold {{ 'text-success' if summary.promedio_general >= 70 else 'text-danger' }}">{{ summary.promedio_general }}</div>
+        <div class="small text-muted">Promedio General</div>
+      </div>
+    </div>
+    {% for p in periods %}
+    <div class="col-6 col-lg">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-2 fw-bold {{ 'text-success' if summary.por_periodo[p].promedio >= 70 else ('text-danger' if summary.por_periodo[p].promedio > 0 else 'text-muted') }}">
+          {{ summary.por_periodo[p].promedio if summary.por_periodo[p].promedio > 0 else '—' }}
+        </div>
+        <div class="badge bg-primary-subtle text-primary rounded-pill px-2 small">{{ p }}</div>
+        <div class="small text-muted">{{ summary.por_periodo[p].count }} eval.</div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="col-6 col-lg">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold {{ 'text-success' if att_summary.porcentaje >= 75 else 'text-warning' }}">{{ att_summary.porcentaje }}%</div>
+        <div class="small text-muted">Asistencia</div>
+        <div class="small {{ 'text-danger fw-bold' if att_summary.has_alert else 'text-muted' }}">
+          {{ att_summary.ausentes }} ausencias{% if att_summary.has_alert %} ⚠{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grafico de evolucion -->
+  {% if summary.evolucion_chart.data | sum > 0 %}
+  <div class="modern-card p-4 mb-4">
+    <h5 class="fw-bold mb-3"><i class="bi bi-graph-up me-2 text-primary"></i>Evolucion por Periodo</h5>
+    <div style="position:relative;height:200px;">
+      <canvas id="evolucionChart"></canvas>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Tabla de calificaciones por asignatura -->
+  <div class="modern-card p-0 overflow-hidden mb-4">
+    <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+      <h5 class="fw-bold mb-0"><i class="bi bi-table me-2 text-primary"></i>Cuadro de Calificaciones</h5>
+      <span class="badge bg-secondary-subtle text-secondary rounded-pill">Minimo aprobatorio: 70</span>
+    </div>
+    {% if summary.por_asignatura %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light small text-uppercase fw-semibold">
+          <tr>
+            <th>Asignatura</th>
+            {% for p in periods %}<th class="text-center">{{ p }}</th>{% endfor %}
+            <th class="text-center">RP</th>
+            <th class="text-center">Promedio</th>
+            <th class="text-center">Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in summary.por_asignatura %}
+          <tr class="{{ 'table-danger' if not item.aprobada else '' }}">
+            <td class="fw-semibold">{{ item.asignatura.nombre }}</td>
+            {% for p in periods %}
+            {% set ev = item.por_periodo.get(p) %}
+            <td class="text-center">
+              {% if ev %}
+              <span class="badge rounded-pill px-2 {{ 'bg-success' if (ev.calificacion_final_periodo or ev.score) >= 70 else 'bg-danger' }}">
+                {{ ev.calificacion_final_periodo or ev.score | int }}
+              </span>
+              {% else %}<span class="text-muted">—</span>{% endif %}
+            </td>
+            {% endfor %}
+            <td class="text-center">
+              {% set has_rec = item.evaluaciones | selectattr('calificacion_recuperacion') | list %}
+              {% if has_rec %}
+              <span class="badge bg-warning text-dark rounded-pill px-2">
+                {{ has_rec[0].calificacion_recuperacion | int }}
+              </span>
+              {% else %}<span class="text-muted">—</span>{% endif %}
+            </td>
+            <td class="text-center fw-bold {{ 'text-success' if item.aprobada else 'text-danger' }}">
+              {{ item.promedio }}
+            </td>
+            <td class="text-center">
+              {% if item.aprobada %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2">Aprobada</span>
+              {% else %}
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2">Reprobada</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('evaluation.register', student_id=student.id, asignatura_id=item.asignatura.id) }}"
+                 class="btn btn-sm btn-outline-primary rounded-pill px-2"><i class="bi bi-pencil"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot class="table-light fw-bold">
+          <tr>
+            <td>PROMEDIO GENERAL</td>
+            {% for p in periods %}
+            <td class="text-center">{{ summary.por_periodo[p].promedio if summary.por_periodo[p].promedio > 0 else '—' }}</td>
+            {% endfor %}
+            <td></td>
+            <td class="text-center {{ 'text-success' if summary.promedio_general >= 70 else 'text-danger' }}">{{ summary.promedio_general }}</td>
+            <td></td><td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    {% else %}
+    <div class="p-5 text-center text-muted">
+      <i class="bi bi-clipboard-x fs-1 d-block mb-2"></i>
+      Sin calificaciones registradas. Usa el boton "Registrar Calificacion" o carga datos demo.
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  {% if summary.evolucion_chart.data | sum > 0 %}
+  new Chart(document.getElementById('evolucionChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: {{ summary.evolucion_chart.labels | tojson }},
+      datasets: [{
+        label: 'Promedio por Periodo',
+        data:  {{ summary.evolucion_chart.data | tojson }},
+        borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)',
+        fill: true, tension: 0.4, pointRadius: 6, pointBackgroundColor: '#3b82f6',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { min:0, max:100, ticks:{ stepSize:10 },
+        annotations: [{ type:'line', yMin:70, yMax:70, borderColor:'#ef4444', borderDash:[6,3], label:{ content:'Min 70', display:true } }]
+      }},
+      plugins: { legend:{ display:false } }
+    }
+  });
+  {% endif %}
+});
+</script>
+{% endblock %}

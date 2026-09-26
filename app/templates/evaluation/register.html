@@ -1,0 +1,95 @@
+﻿{% extends 'base.html' %}
+{% block title %}Registrar Calificacion — EduReport{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:720px;">
+  <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+    <a href="{{ url_for('evaluation.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <div>
+      <h1 class="fw-bold mb-0 fs-4">
+        <i class="bi bi-clipboard2-plus text-primary me-2"></i>
+        {{ 'Editar Calificacion' if ev_to_edit else 'Registrar Calificacion' }}
+      </h1>
+      {% if selected_student %}
+      <p class="text-muted mb-0 small">{{ selected_student.full_name }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="modern-card p-4">
+    <form method="POST" action="{{ url_for('evaluation.register') }}">
+      {% if ev_to_edit %}<input type="hidden" name="eval_id" value="{{ ev_to_edit.id }}">{% endif %}
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Estudiante</label>
+        <select name="student_id" class="form-select rounded-3" required
+                id="student-select"
+                {% if selected_student %}{% endif %}>
+          <option value="">-- Seleccionar estudiante --</option>
+          {% for s in students %}
+          <option value="{{ s.id }}"
+            {% if selected_student and s.id == selected_student.id %}selected
+            {% elif ev_to_edit and s.id == ev_to_edit.student_id %}selected{% endif %}>
+            {{ s.full_name }} — {{ s.section.nombre or s.section.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-8">
+          <label class="form-label fw-semibold">Asignatura</label>
+          <select name="asignatura_id" class="form-select rounded-3" required>
+            <option value="">-- Seleccionar --</option>
+            {% for a in asignaturas %}
+            <option value="{{ a.id }}"
+              {% if ev_to_edit and a.id == ev_to_edit.asignatura_id %}selected{% endif %}>
+              {{ a.nombre }} ({{ a.codigo }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <label class="form-label fw-semibold">Periodo</label>
+          <select name="period" class="form-select rounded-3" required>
+            {% for p in periods %}
+            <option value="{{ p }}"
+              {% if ev_to_edit and ev_to_edit.period == p %}selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold">Calificacion Ordinaria <span class="text-muted">(0–100)</span></label>
+          <input type="number" name="score" class="form-control rounded-3" min="0" max="100" step="0.5"
+                 value="{{ ev_to_edit.score if ev_to_edit else '' }}" required placeholder="Ej: 85">
+          <div class="form-text">Minimo aprobatorio: 70 puntos.</div>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold">Recuperacion Pedagogica <span class="text-muted">(opcional)</span></label>
+          <input type="number" name="calificacion_recuperacion" class="form-control rounded-3" min="0" max="100" step="0.5"
+                 value="{{ ev_to_edit.calificacion_recuperacion if ev_to_edit and ev_to_edit.calificacion_recuperacion else '' }}"
+                 placeholder="Solo si aplica RP">
+          <div class="form-text">Si la RP es mayor, se usa como calificacion final.</div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Observacion <span class="text-muted">(opcional)</span></label>
+        <textarea name="observaciones" class="form-control rounded-3" rows="2"
+                  placeholder="Ej: Progreso notable en comprension lectora.">{{ ev_to_edit.observaciones if ev_to_edit and ev_to_edit.observaciones else '' }}</textarea>
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end">
+        <a href="{{ url_for('evaluation.index') }}" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-semibold shadow-sm">
+          <i class="bi bi-cloud-check-fill me-1"></i> Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

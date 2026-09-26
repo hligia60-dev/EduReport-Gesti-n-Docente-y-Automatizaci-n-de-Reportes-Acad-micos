@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Centro de Reportes — EduReport{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1"><i class="bi bi-file-earmark-pdf-fill text-danger me-2"></i>Centro de Reportes</h1>
+      <p class="text-muted mb-0">Informes de asistencia, rendimiento, seguimiento y reconocimiento academico.</p>
+    </div>
+    <a href="{{ url_for('reports.generar') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+      <i class="bi bi-file-plus-fill me-1"></i> Generar Nuevo Reporte
+    </a>
+  </div>
+
+  <!-- Acceso rapido: alertas -->
+  {% if alerts %}
+  <div class="alert alert-danger d-flex align-items-center gap-3 rounded-4 shadow-sm mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+    <div>
+      <strong>{{ alerts|length }} estudiante(s) con alerta activa</strong> (≥3 ausencias).
+      Genera el informe de seguimiento de asistencia de forma inmediata.
+      <a href="{{ url_for('attendance.alerts') }}" class="alert-link ms-2">Ver bandeja de alertas →</a>
+    </div>
+  </div>
+
+  <div class="modern-card p-0 overflow-hidden mb-5">
+    <div class="p-4 border-bottom"><h5 class="fw-bold mb-0 text-danger">Informes Urgentes — Regla 3 Ausencias</h5></div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light small text-uppercase fw-semibold">
+          <tr><th>Estudiante</th><th>Seccion</th><th class="text-center">Ausencias</th><th>Tutor</th><th class="text-end">Informe</th></tr>
+        </thead>
+        <tbody>
+          {% for item in alerts %}
+          <tr>
+            <td><strong>{{ item.student.full_name }}</strong><br><code class="small">{{ item.student.registration_number }}</code></td>
+            <td><span class="badge bg-primary rounded-pill">{{ item.grade.name }}</span> Secc. {{ item.section.name }}</td>
+            <td class="text-center"><span class="badge bg-danger rounded-pill px-3 py-2 fs-6 badge-pulse">{{ item.absences_count }}</span></td>
+            <td><small class="d-block fw-semibold">{{ item.student.tutor_name or '—' }}</small><small class="text-muted">{{ item.student.tutor_phone or '' }}</small></td>
+            <td class="text-end">
+              <a href="{{ url_for('reports.attendance_report', student_id=item.student.id) }}"
+                 class="btn btn-sm btn-warning rounded-pill px-3 fw-semibold shadow-sm" target="_blank">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> PDF
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Tipos de reportes disponibles -->
+  <div class="modern-card p-4 mb-5">
+    <h5 class="fw-bold mb-3"><i class="bi bi-list-check me-2 text-primary"></i>Tipos de Reportes Disponibles</h5>
+    <div class="row g-3">
+      {% set tipo_meta = [
+        ('Seguimiento de Asistencia','bell-fill','danger','Historial de ausencias, alertas y recomendaciones al tutor.'),
+        ('Avance Academico','graph-up','primary','Promedios por periodo y asignatura. Calificaciones registradas.'),
+        ('Bajo Rendimiento','graph-down-arrow','warning','Asignaturas con promedio menor a 70. Plan de recuperacion.'),
+        ('Progreso Academico','graph-up-arrow','success','Evolucion del estudiante entre P1, P2, P3 y P4.'),
+        ('Reconocimiento Positivo','trophy-fill','info','Reconocimiento a estudiantes con destacado desempeno.'),
+        ('Seguimiento Integral','journal-bookmark','secondary','Asistencia + rendimiento + seguimientos anteriores.'),
+      ] %}
+      {% for nombre, icono, color, desc in tipo_meta %}
+      <div class="col-sm-6 col-lg-4">
+        <div class="p-3 border rounded-3 h-100 hover-lift">
+          <div class="d-flex align-items-start gap-3">
+            <div class="card-icon icon-{{ color }} mb-0 flex-shrink-0" style="width:42px;height:42px;font-size:1.2rem;">
+              <i class="bi bi-{{ icono }}"></i>
+            </div>
+            <div>
+              <div class="fw-semibold small">{{ nombre }}</div>
+              <div class="text-muted" style="font-size:.78rem;">{{ desc }}</div>
+              <a href="{{ url_for('reports.generar') }}?tipo={{ nombre | urlencode }}"
+                 class="btn btn-sm btn-outline-{{ color }} rounded-pill px-2 mt-2" style="font-size:.75rem;">
+                Generar <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Historial de reportes generados -->
+  {% if reportes %}
+  <div class="modern-card p-0 overflow-hidden">
+    <div class="p-4 border-bottom"><h5 class="fw-bold mb-0">Historial de Reportes (ultimos 20)</h5></div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 small">
+        <thead class="table-light text-uppercase fw-semibold">
+          <tr><th>Titulo</th><th>Tipo</th><th>Periodo</th><th>Fecha</th><th class="text-end">Acciones</th></tr>
+        </thead>
+        <tbody>
+          {% for rep in reportes %}
+          <tr>
+            <td class="fw-semibold">{{ rep.titulo }}</td>
+            <td><span class="badge bg-secondary-subtle text-secondary rounded-pill px-2">{{ rep.tipo_reporte }}</span></td>
+            <td>{{ rep.periodo or '—' }}</td>
+            <td class="text-muted">{{ rep.fecha_generacion.strftime('%d/%m/%Y %H:%M') if rep.fecha_generacion else '—' }}</td>
+            <td class="text-end">
+              <div class="d-inline-flex gap-1">
+                <a href="{{ url_for('reports.descargar_pdf_reporte', reporte_id=rep.id) }}" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="Descargar en PDF">
+                  <i class="bi bi-file-earmark-pdf-fill me-1"></i> PDF
+                </a>
+                <form action="{{ url_for('reports.eliminar_reporte', reporte_id=rep.id) }}" method="POST" class="d-inline"
+                      onsubmit="return confirm('¿Está seguro de eliminar este reporte? Si fue reportado por error, esto lo removerá.');">
+                  <input type="hidden" name="next" value="{{ url_for('reports.index') }}">
+                  <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-2 text-danger border-0" title="Eliminar reporte">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

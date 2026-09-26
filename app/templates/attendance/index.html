@@ -1,0 +1,191 @@
+﻿{% extends 'base.html' %}
+{% block title %}Asistencia — EduReport{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1"><i class="bi bi-calendar-check-fill text-primary me-2"></i>Módulo de Asistencia</h1>
+      <p class="text-muted mb-0">Registro diario P / T / A / E &bull; Estadísticas &bull; Alertas automáticas por 3 ausencias.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{{ url_for('attendance.register_daily') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+        <i class="bi bi-check2-all me-1"></i> Pase de Lista
+      </a>
+      <a href="{{ url_for('attendance.alerts') }}" class="btn btn-outline-danger rounded-pill px-4 shadow-sm">
+        <i class="bi bi-bell-fill me-1"></i> Ver Alertas (≥3 Faltas)
+        {% if alerts %}<span class="badge bg-danger ms-1">{{ alerts|length }}</span>{% endif %}
+      </a>
+      <form action="{{ url_for('attendance.seed_demo') }}" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm"
+                onclick="return confirm('Insertar datos demo de asistencia?')">
+          <i class="bi bi-lightning-charge-fill me-1"></i> Datos Demo
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tarjetas P/T/A/E -->
+  <div class="row g-3 mb-5">
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 h-100">
+        <div class="d-flex align-items-center gap-3">
+          <div class="card-icon icon-emerald mb-0"><i class="bi bi-check-circle-fill"></i></div>
+          <div>
+            <div class="text-muted small fw-semibold text-uppercase">P — Presentes</div>
+            <div class="fw-bold fs-2">{{ stats.total_present }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 h-100">
+        <div class="d-flex align-items-center gap-3">
+          <div class="card-icon icon-amber mb-0"><i class="bi bi-clock-fill"></i></div>
+          <div>
+            <div class="text-muted small fw-semibold text-uppercase">T — Tardanzas</div>
+            <div class="fw-bold fs-2">{{ stats.total_tardy }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 h-100 border-danger">
+        <div class="d-flex align-items-center gap-3">
+          <div class="card-icon icon-rose mb-0"><i class="bi bi-x-circle-fill"></i></div>
+          <div>
+            <div class="text-danger small fw-bold text-uppercase">A — Ausencias</div>
+            <div class="fw-bold fs-2 text-danger">{{ stats.total_absent }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 h-100">
+        <div class="d-flex align-items-center gap-3">
+          <div class="card-icon icon-sky mb-0"><i class="bi bi-file-earmark-check-fill"></i></div>
+          <div>
+            <div class="text-muted small fw-semibold text-uppercase">E — Excusas</div>
+            <div class="fw-bold fs-2">{{ stats.total_excused }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-5">
+      <div class="modern-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0">Distribución Global</h5>
+          {% if stats.total_records > 0 %}
+          <span class="badge bg-success-subtle text-success border border-success-subtle">{{ stats.porcentaje_global }}% Asistencia</span>
+          {% endif %}
+        </div>
+        {% if stats.total_records > 0 %}
+        <div style="position:relative;height:240px;"><canvas id="attendancePie"></canvas></div>
+        <div class="d-flex justify-content-around text-center mt-3 pt-3 border-top small">
+          <div><span class="d-block fw-bold text-success">{{ stats.total_present }}</span><span class="text-muted">Presentes</span></div>
+          <div><span class="d-block fw-bold text-warning">{{ stats.total_tardy }}</span><span class="text-muted">Tardanzas</span></div>
+          <div><span class="d-block fw-bold text-danger">{{ stats.total_absent }}</span><span class="text-muted">Ausencias</span></div>
+          <div><span class="d-block fw-bold text-info">{{ stats.total_excused }}</span><span class="text-muted">Excusas</span></div>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-bar-chart-line fs-1 d-block mb-2"></i>
+          Sin registros aún. Usa Pase de Lista o carga Datos Demo.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="modern-card p-4 h-100">
+        <h5 class="fw-bold mb-3">Alertas por Ciclo Académico</h5>
+        <div style="position:relative;height:240px;"><canvas id="cycleAlertsBar"></canvas></div>
+        <p class="text-muted small mt-3 mb-0 text-center">
+          Primer Ciclo: 1.º, 2.º y 3.º &bull; Segundo Ciclo: 4.º, 5.º y 6.º
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leyenda de estados -->
+  <div class="modern-card p-4 mb-4">
+    <h5 class="fw-bold mb-3"><i class="bi bi-info-circle me-2 text-primary"></i>Estados de Asistencia</h5>
+    <div class="row g-3">
+      <div class="col-sm-6 col-xl-3">
+        <div class="p-3 rounded-3 border border-success-subtle bg-success-subtle h-100">
+          <div class="d-flex align-items-center gap-2 mb-1"><span class="badge bg-success fs-6 px-3">P</span><strong>Presente</strong></div>
+          <p class="small text-muted mb-0">El estudiante asistió a clases con normalidad.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="p-3 rounded-3 border border-warning-subtle bg-warning-subtle h-100">
+          <div class="d-flex align-items-center gap-2 mb-1"><span class="badge bg-warning text-dark fs-6 px-3">T</span><strong>Tardanza</strong></div>
+          <p class="small text-muted mb-0">Llegó después del horario. 3 tardanzas = 1 ausencia.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="p-3 rounded-3 border border-danger-subtle bg-danger-subtle h-100">
+          <div class="d-flex align-items-center gap-2 mb-1"><span class="badge bg-danger fs-6 px-3">A</span><strong>Ausente</strong></div>
+          <p class="small text-muted mb-0">No asistió. Al acumular 3 se activa la alerta automática.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="p-3 rounded-3 border border-info-subtle bg-info-subtle h-100">
+          <div class="d-flex align-items-center gap-2 mb-1"><span class="badge bg-info text-dark fs-6 px-3">E</span><strong>Excusa</strong></div>
+          <p class="small text-muted mb-0">Ausencia justificada (enfermedad, fallecimiento familiar, etc.).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acceso rápido por sección -->
+  <div class="modern-card p-4">
+    <h5 class="fw-bold mb-3"><i class="bi bi-arrow-right-circle me-2 text-primary"></i>Pase de Lista por Sección</h5>
+    <div class="row g-2">
+      {% for section in sections %}
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <a href="{{ url_for('attendance.register_daily', section_id=section.id) }}"
+           class="btn btn-outline-primary w-100 rounded-3 py-2">
+          <i class="bi bi-people me-1"></i>
+          {{ section.nombre or section.name }}
+          <small class="d-block text-muted">{{ section.grado or '' }}</small>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  {% if stats.total_records > 0 %}
+  new Chart(document.getElementById('attendancePie').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['P – Presente', 'T – Tardanza', 'A – Ausente', 'E – Excusa'],
+      datasets: [{ data: [{{ stats.total_present }}, {{ stats.total_tardy }}, {{ stats.total_absent }}, {{ stats.total_excused }}],
+        backgroundColor: ['#10b981','#f59e0b','#ef4444','#3b82f6'], hoverOffset:8, borderWidth:2 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'bottom'} } }
+  });
+  {% endif %}
+  new Chart(document.getElementById('cycleAlertsBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Primer Ciclo (1.º–3.º)', 'Segundo Ciclo (4.º–6.º)'],
+      datasets: [
+        { label:'Estudiantes Matriculados', data:[{{ stats.c1_total_students }}, {{ stats.c2_total_students }}], backgroundColor:'#3b82f6', borderRadius:6 },
+        { label:'Alertas (≥3 Ausencias)',   data:[{{ stats.c1_alerts }}, {{ stats.c2_alerts }}],             backgroundColor:'#ef4444', borderRadius:6 }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      scales:{ y:{beginAtZero:true, ticks:{stepSize:1}} },
+      plugins:{ legend:{position:'bottom'} } }
+  });
+});
+</script>
+{% endblock %}

@@ -2,24 +2,88 @@
 
 {% block title %}EduReport - Sistema de Gestión Docente y Reportes Académicos{% endblock %}
 
+{% block navbar %}
+<!-- Navbar Especializada de la Landing Page -->
+<nav class="navbar navbar-expand-xl navbar-dark landing-nav sticky-top py-3">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-3" href="{{ url_for('main.index') }}">
+            <div class="brand-icon-box">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <div class="d-flex flex-column">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="navbar-brand-title">EduReport</span>
+                    <span class="brand-pill d-none d-sm-inline">Nivel Secundario</span>
+                </div>
+                <small class="text-white-50" style="font-size: 0.72rem; margin-top: -2px;">Gestión Docente &bull;
+                    República Dominicana</small>
+            </div>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+            data-bs-target="#landingNavbarContent" aria-controls="landingNavbarContent" aria-expanded="false"
+            aria-label="Abrir navegación">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="landingNavbarContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-xl-0 align-items-center gap-1">
+                <li class="nav-item"><a class="nav-link" href="#que-es"><i class="bi bi-info-circle me-1"></i>¿Qué
+                        es?</a></li>
+                <li class="nav-item"><a class="nav-link" href="#problema"><i
+                            class="bi bi-shield-check me-1"></i>Problema</a></li>
+                <li class="nav-item"><a class="nav-link" href="#destinatarios"><i class="bi bi-people me-1"></i>Para
+                        quién</a></li>
+                <li class="nav-item"><a class="nav-link" href="#como-funciona"><i class="bi bi-gear me-1"></i>Cómo
+                        funciona</a></li>
+                <li class="nav-item"><a class="nav-link" href="#funcionalidades"><i
+                            class="bi bi-stars me-1"></i>Funciones</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tecnologias"><i
+                            class="bi bi-cpu me-1"></i>Tecnologías</a></li>
+                <li class="nav-item"><a class="nav-link" href="#arquitectura"><i
+                            class="bi bi-diagram-3 me-1"></i>Arquitectura</a></li>
+                <li class="nav-item"><a class="nav-link" href="#estructura"><i
+                            class="bi bi-folder2-open me-1"></i>Estructura</a></li>
+                <li class="nav-item"><a class="nav-link" href="#ejecucion"><i
+                            class="bi bi-play-circle me-1"></i>Ejecutar</a></li>
+                <li class="nav-item ms-xl-2 mt-2 mt-xl-0">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn-landing-cta" id="btnNavEntrarSistema">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Entrar al sistema</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
 {% block content %}
-<!-- Hero Section -->
+<!-- =========================================================================
+     HERO SECTION
+     ========================================================================= -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-7">
                 <div class="hero-tag mb-3">
-                    <span class="badge bg-success rounded-circle p-1"><i class="bi bi-check" style="font-size: 0.6rem;"></i></span>
-                    <span>Sistema Inicializado y Operativo en <strong>Python {{ python_version }} + Flask {{ flask_version }}</strong></span>
+                    <span class="badge bg-success rounded-circle p-1"><i class="bi bi-check"
+                            style="font-size: 0.65rem;"></i></span>
+                    <span>Plataforma Académica Oficial &bull; <strong>Python {{ python_version }} + Flask {{
+                            flask_version }}</strong></span>
                 </div>
+
                 <h1 class="hero-title mb-3">
-                    Gestión Docente y Generación Automática de <span>Reportes Académicos</span>
+                    Gestión Docente y Automatización de <span>Reportes Académicos</span>
                 </h1>
+
                 <p class="lead text-secondary mb-4">
-                    Plataforma académica integral diseñada para optimizar el trabajo del docente en el <strong>Nivel Secundario</strong>, centralizando el seguimiento de asistencia, evaluación por competencias y emisión de informes formales.
+                    La solución digital integral diseñada para centros del <strong>Nivel Secundario</strong>. Centraliza
+                    el pase de lista con estados oficiales, activa alertas tempranas por inasistencia y emite sábanas de
+                    calificaciones e informes formales en segundos.
                 </p>
 
-                <!-- Ciclos Académicos Requeridos -->
+                <!-- Ciclos Curriculares -->
                 <div class="d-flex flex-wrap gap-2 mb-4">
                     <div class="cycle-badge cycle-1">
                         <i class="bi bi-mortarboard-fill"></i>
@@ -31,116 +95,74 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-wrap gap-3">
-                    <a href="#simulador" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm">
-                        <i class="bi bi-lightning-charge-fill me-1"></i> Probar Regla de 3 Ausencias
+                <!-- Botones Principales de Acción -->
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <a href="{{ url_for('main.dashboard') }}"
+                        class="btn btn-hero-primary d-inline-flex align-items-center gap-2" id="btnHeroEntrarSistema">
+                        <i class="bi bi-box-arrow-in-right fs-5"></i>
+                        <span class="fs-6">Entrar al sistema</span>
                     </a>
-                    <a href="{{ url_for('main.arquitectura') }}" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold">
-                        <i class="bi bi-diagram-3 me-1"></i> Ver Arquitectura
+                    <a href="#como-funciona" class="btn btn-outline-secondary rounded-pill px-4 py-3 fw-semibold">
+                        <i class="bi bi-play-circle me-1"></i> Ver cómo funciona
+                    </a>
+                    <a href="#ejecucion" class="btn btn-link text-decoration-none text-muted fw-semibold">
+                        <i class="bi bi-terminal me-1"></i> Guía de instalación &rarr;
                     </a>
                 </div>
             </div>
 
+            <!-- Tarjeta de Estado del Sistema -->
             <div class="col-lg-5">
                 <div class="modern-card p-4 shadow-lg border-0 bg-white">
                     <div class="d-flex align-items-center justify-content-between pb-3 border-bottom mb-3">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-shield-check text-success fs-4"></i>
+                            <i class="bi bi-shield-fill-check text-success fs-4"></i>
                             <h5 class="fw-bold mb-0">Consola de Estado</h5>
                         </div>
-                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">En Ejecución</span>
+                        <span
+                            class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
+                            <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem; vertical-align: middle;"></i>
+                            Activo
+                        </span>
                     </div>
 
                     <ul class="list-unstyled mb-4">
                         <li class="d-flex justify-content-between py-2 border-bottom border-light">
-                            <span class="text-muted"><i class="bi bi-filetype-py me-2 text-primary"></i> Framework Web:</span>
-                            <span class="fw-semibold">Flask {{ flask_version }}</span>
+                            <span class="text-muted"><i class="bi bi-laptop me-2 text-primary"></i> Sistema:</span>
+                            <span class="fw-bold text-dark">EduReport v1.0</span>
                         </li>
                         <li class="d-flex justify-content-between py-2 border-bottom border-light">
-                            <span class="text-muted"><i class="bi bi-database me-2 text-info"></i> Capa ORM:</span>
-                            <span class="fw-semibold">Flask-SQLAlchemy</span>
+                            <span class="text-muted"><i class="bi bi-filetype-py me-2 text-primary"></i> Lenguaje &
+                                Motor:</span>
+                            <span class="fw-semibold">Python {{ python_version }} / Flask {{ flask_version }}</span>
                         </li>
                         <li class="d-flex justify-content-between py-2 border-bottom border-light">
-                            <span class="text-muted"><i class="bi bi-hdd me-2 text-secondary"></i> Base de Datos:</span>
-                            <span class="fw-semibold">SQLite (instance/edureport.db)</span>
+                            <span class="text-muted"><i class="bi bi-database me-2 text-info"></i> Capa de Datos:</span>
+                            <span class="fw-semibold">SQLite + SQLAlchemy ORM</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-light">
+                            <span class="text-muted"><i class="bi bi-people me-2 text-primary"></i> Base
+                                Estudiantil:</span>
+                            <span class="badge bg-primary-subtle text-primary">{{ total_students }} Estudiantes
+                                Registrados</span>
                         </li>
                         <li class="d-flex justify-content-between py-2">
-                            <span class="text-muted"><i class="bi bi-bell me-2 text-danger"></i> Regla Ausentismo:</span>
-                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Alerta a las 3 Faltas</span>
+                            <span class="text-muted"><i class="bi bi-bell-fill me-2 text-danger"></i> Regla
+                                Ausentismo:</span>
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Alerta a las 3
+                                Faltas</span>
                         </li>
                     </ul>
 
-                    <div class="p-3 bg-light rounded-3 text-center">
-                        <small class="text-muted d-block mb-1">Punto de Acceso Local</small>
-                        <code class="text-primary fw-bold fs-6">http://127.0.0.1:5000</code>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- SECCIÓN: Simulador Interactivo de la Regla de 3 Ausencias -->
-<section id="simulador" class="py-5 bg-white border-bottom">
-    <div class="container">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-6">
-                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill mb-2">
-                    <i class="bi bi-bell-fill me-1"></i> Regla Específica de Negocio
-                </span>
-                <h2 class="fw-bold mb-3">Detección Temprana: Regla de 3 Ausencias</h2>
-                <p class="text-secondary mb-3">
-                    {{ rule_description }}
-                </p>
-                <div class="alert alert-info border-0 rounded-4 mb-4">
-                    <div class="d-flex align-items-start gap-2">
-                        <i class="bi bi-info-circle-fill text-info fs-5 mt-1"></i>
-                        <small class="text-secondary">
-                            Esta regla pedagógica previene la deserción escolar. Al activarse la tercera inasistencia, el sistema habilita de forma inmediata el botón para emitir la ficha oficial de citación y seguimiento a la familia.
-                        </small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Caja Interactiva de Simulación -->
-            <div class="col-lg-6">
-                <div class="simulator-box" id="simSimulatorBox">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted small text-uppercase fw-semibold d-block">Estudiante de Muestra</span>
-                            <h5 class="fw-bold mb-0">Carlos E. Rosario (4.º de Secundaria - Sección A)</h5>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">HOST LOCAL ACTIVO</small>
+                            <code class="text-primary fw-bold">http://127.0.0.1:5000</code>
                         </div>
-                        <div id="simAlertBadge" class="badge bg-danger text-white px-3 py-2 rounded-pill d-none">
-                            <i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ALERTA ACTIVADA!
-                        </div>
-                    </div>
-
-                    <!-- Indicador visual de 3 ausencias -->
-                    <div class="text-center my-4">
-                        <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
-                            <div class="absence-dot" id="simDot1">1</div>
-                            <span class="text-muted">&bull;</span>
-                            <div class="absence-dot" id="simDot2">2</div>
-                            <span class="text-muted">&bull;</span>
-                            <div class="absence-dot" id="simDot3">3</div>
-                        </div>
-                        <h2 class="display-6 fw-bold mb-1"><span id="simAbsenceCount">0</span> / 3</h2>
-                        <div id="simStatusText" class="mt-2">
-                            <span class="text-success fw-medium"><i class="bi bi-check-circle-fill me-1"></i> Asistencia normal (0 ausencias).</span>
-                        </div>
-                    </div>
-
-                    <!-- Botones de Acción de la Simulación -->
-                    <div class="d-flex flex-wrap gap-2 justify-content-center mt-4 pt-3 border-top">
-                        <button class="btn btn-danger rounded-pill px-3" id="simBtnAddAbsence">
-                            <i class="bi bi-person-x me-1"></i> Registrar Falta (+1)
-                        </button>
-                        <button class="btn btn-outline-secondary rounded-pill px-3" id="simBtnReset">
-                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reiniciar
-                        </button>
-                        <button class="btn btn-warning rounded-pill px-3 text-dark fw-bold disabled" id="simBtnGenerateReport" disabled>
-                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Generar Informe de Seguimiento
-                        </button>
+                        <a href="{{ url_for('main.dashboard') }}"
+                            class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                            Acceder <i class="bi bi-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -148,59 +170,539 @@
     </div>
 </section>
 
-<!-- Módulos de EduReport Planificados -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="text-center max-w-xl mx-auto mb-5">
-            <h2 class="fw-bold mb-2">Módulos del Sistema EduReport</h2>
-            <p class="text-muted">Diseñados conforme a la normativa académica de Educación Secundaria</p>
+<!-- =========================================================================
+     SECCIÓN 1: ¿QUÉ ES EDUREPORT?
+     ========================================================================= -->
+<section id="que-es" class="py-5 bg-white border-bottom">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="section-badge badge-blue">
+                    <i class="bi bi-info-circle-fill"></i> 01. Definición & Alcance
+                </span>
+                <h2 class="section-title mb-3">¿Qué es EduReport?</h2>
+                <p class="text-secondary lead fs-6 mb-3">
+                    <strong>EduReport</strong> es una plataforma web especializada en la <strong>gestión docente,
+                        control escolar y generación automática de reportes e informes oficiales</strong> para el Nivel
+                    Secundario del sistema educativo.
+                </p>
+                <p class="text-secondary mb-4">
+                    Diseñado tomando como base directa los <em>Registros de Grado Oficiales de la República
+                        Dominicana</em>, EduReport unifica y digitaliza los dos ciclos fundamentales:
+                </p>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-1-circle-fill text-primary fs-5"></i>
+                                <h6 class="fw-bold mb-0">Primer Ciclo</h6>
+                            </div>
+                            <p class="small text-muted mb-0">Abarca <strong>1.º, 2.º y 3.º de Secundaria</strong>.
+                                Seguimiento por competencias específicas, indicadores de logro y 4 períodos evaluativos
+                                (P1 a P4).</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-2-circle-fill text-success fs-5"></i>
+                                <h6 class="fw-bold mb-0">Segundo Ciclo</h6>
+                            </div>
+                            <p class="small text-muted mb-0">Abarca <strong>4.º, 5.º y 6.º de Secundaria</strong> con
+                                modalidades Académica, Técnico-Profesional y en Artes, control de expedientes y actas de
+                                promoción.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 text-primary fw-semibold small">
+                    <i class="bi bi-check2-all fs-5"></i> Estandarización curricular, respaldo en base de datos
+                    relacional y emisión de documentos con validez institucional.
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="modern-card p-4 text-center">
+                            <div class="card-icon icon-blue mx-auto">
+                                <i class="bi bi-journal-text"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1">100%</h3>
+                            <p class="text-muted small mb-0">Alineado al Registro de Grado Oficial</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="modern-card p-4 text-center">
+                            <div class="card-icon icon-emerald mx-auto">
+                                <i class="bi bi-stopwatch"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1">80%</h3>
+                            <p class="text-muted small mb-0">Reducción en tiempo de papeleo docente</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="modern-card p-4 text-center">
+                            <div class="card-icon icon-rose mx-auto">
+                                <i class="bi bi-bell"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1">3 Faltas</h3>
+                            <p class="text-muted small mb-0">Regla de alerta automática ante ausentismo</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="modern-card p-4 text-center">
+                            <div class="card-icon icon-purple mx-auto">
+                                <i class="bi bi-printer"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1">1 Clic</h3>
+                            <p class="text-muted small mb-0">Emisión de informes y sábanas impresas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN 2: ¿QUÉ PROBLEMA RESUELVE?
+     ========================================================================= -->
+<section id="problema" class="py-5 bg-light border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-red">
+                <i class="bi bi-exclamation-octagon-fill"></i> 02. Impacto & Transformación
+            </span>
+            <h2 class="section-title">¿Qué problema resuelve EduReport?</h2>
+            <p class="section-subtitle">
+                Los centros educativos y docentes enfrentan diariamente cuellos de botella administrativos que restan
+                tiempo valioso al proceso de enseñanza-aprendizaje.
+            </p>
         </div>
 
         <div class="row g-4">
+            <!-- Problema 1 -->
             <div class="col-md-6 col-lg-3">
+                <div class="problem-card">
+                    <div class="d-flex align-items-center gap-2 text-danger mb-2">
+                        <i class="bi bi-file-earmark-x fs-4"></i>
+                        <h6 class="fw-bold mb-0">Sobrecarga en Papel</h6>
+                    </div>
+                    <p class="small text-muted mb-3">
+                        Llenado manual de libros de registro físicos voluminosos, propenso a tachaduras, extravíos y
+                        deterioro con el paso de los años.
+                    </p>
+                    <div class="solution-card mt-2">
+                        <small class="text-success fw-bold d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i>
+                            Solución EduReport:</small>
+                        <small class="text-secondary">Expediente digitalizado y pase de lista en segundos desde
+                            cualquier dispositivo.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="problem-card">
+                    <div class="d-flex align-items-center gap-2 text-danger mb-2">
+                        <i class="bi bi-person-slash fs-4"></i>
+                        <h6 class="fw-bold mb-0">Ausentismo Silencioso</h6>
+                    </div>
+                    <p class="small text-muted mb-3">
+                        Estudiantes que acumulan faltas dispersas a lo largo del mes sin que el personal de orientación
+                        o la familia se entere oportunamente.
+                    </p>
+                    <div class="solution-card mt-2">
+                        <small class="text-success fw-bold d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i>
+                            Solución EduReport:</small>
+                        <small class="text-secondary">Detección inmediata a la 3.ª inasistencia con disparo automático
+                            de alerta preventiva.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="problem-card">
+                    <div class="d-flex align-items-center gap-2 text-danger mb-2">
+                        <i class="bi bi-calculator-fill fs-4"></i>
+                        <h6 class="fw-bold mb-0">Errores de Calificación</h6>
+                    </div>
+                    <p class="small text-muted mb-3">
+                        Cálculos manuales errados de promedios de períodos (P1 a P4), recuperaciones pedagógicas y notas
+                        finales de promoción.
+                    </p>
+                    <div class="solution-card mt-2">
+                        <small class="text-success fw-bold d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i>
+                            Solución EduReport:</small>
+                        <small class="text-secondary">Motor computacional automatizado bajo los criterios exactos del
+                            currículo oficial.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="problem-card">
+                    <div class="d-flex align-items-center gap-2 text-danger mb-2">
+                        <i class="bi bi-envelope-exclamation fs-4"></i>
+                        <h6 class="fw-bold mb-0">Retraso de Citaciones</h6>
+                    </div>
+                    <p class="small text-muted mb-3">
+                        Dificultad y burocracia para redactar e imprimir circulares, notificaciones a tutores y
+                        constancias de seguimiento escolar.
+                    </p>
+                    <div class="solution-card mt-2">
+                        <small class="text-success fw-bold d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i>
+                            Solución EduReport:</small>
+                        <small class="text-secondary">Generación instantánea de fichas oficiales listas para firma e
+                            impresión directa.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN 3: ¿PARA QUIÉN ESTÁ DISEÑADO?
+     ========================================================================= -->
+<section id="destinatarios" class="py-5 bg-white border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-emerald">
+                <i class="bi bi-people-fill"></i> 03. Comunidad Educativa
+            </span>
+            <h2 class="section-title">¿Para quién está diseñado?</h2>
+            <p class="section-subtitle">
+                EduReport articula las necesidades de todos los actores del ecosistema escolar con perfiles adaptados a
+                sus responsabilidades cotidianas.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Docentes -->
+            <div class="col-md-6 col-lg-3">
+                <div class="persona-card">
+                    <div class="persona-icon-wrapper icon-blue">
+                        <i class="bi bi-person-video3"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Docentes de Aula y Titulares</h5>
+                    <span class="badge bg-primary-subtle text-primary mb-3 align-self-start">Gestión Operativa</span>
+                    <p class="text-muted small mb-3">
+                        Pasan lista en segundos con estados P/T/A/E, asientan calificaciones de períodos (P1 a P4) y
+                        gestionan recuperaciones pedagógicas sin hojas de cálculo confusas.
+                    </p>
+                    <ul class="list-unstyled small text-secondary mt-auto">
+                        <li><i class="bi bi-check2 text-primary me-1"></i> Pase de lista sin fricción</li>
+                        <li><i class="bi bi-check2 text-primary me-1"></i> Control de competencias</li>
+                        <li><i class="bi bi-check2 text-primary me-1"></i> Ahorro de tiempo diario</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Orientación y Psicología -->
+            <div class="col-md-6 col-lg-3">
+                <div class="persona-card">
+                    <div class="persona-icon-wrapper icon-rose">
+                        <i class="bi bi-heart-pulse-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Orientación y Psicología</h5>
+                    <span class="badge bg-danger-subtle text-danger mb-3 align-self-start">Prevención y Apoyo</span>
+                    <p class="text-muted small mb-3">
+                        Monitorean las alertas tempranas de estudiantes en riesgo de deserción al alcanzar 3
+                        inasistencias y emiten fichas formales de citación familiar.
+                    </p>
+                    <ul class="list-unstyled small text-secondary mt-auto">
+                        <li><i class="bi bi-check2 text-danger me-1"></i> Alertas tempranas activas</li>
+                        <li><i class="bi bi-check2 text-danger me-1"></i> Fichas con firmas oficiales</li>
+                        <li><i class="bi bi-check2 text-danger me-1"></i> Prevención del abandono escolar</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Equipo Directivo -->
+            <div class="col-md-6 col-lg-3">
+                <div class="persona-card">
+                    <div class="persona-icon-wrapper icon-purple">
+                        <i class="bi bi-buildings-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Dirección & Coordinación</h5>
+                    <span class="badge bg-purple-subtle text-purple mb-3 align-self-start"
+                        style="background:#faf5ff; color:#7c3aed; border:1px solid #ddd6fe;">Supervisión Integral</span>
+                    <p class="text-muted small mb-3">
+                        Visualizan indicadores macro de retención, porcentaje de asistencia por grado y sección, y
+                        emiten las sábanas de notas oficiales consolidadas.
+                    </p>
+                    <ul class="list-unstyled small text-secondary mt-auto">
+                        <li><i class="bi bi-check2 text-purple me-1"></i> Panel estadístico general</li>
+                        <li><i class="bi bi-check2 text-purple me-1"></i> Auditoría de calificaciones</li>
+                        <li><i class="bi bi-check2 text-purple me-1"></i> Reportes consolidados</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Familias y Tutores -->
+            <div class="col-md-6 col-lg-3">
+                <div class="persona-card">
+                    <div class="persona-icon-wrapper icon-emerald">
+                        <i class="bi bi-house-heart-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">Padres, Madres y Tutores</h5>
+                    <span class="badge bg-success-subtle text-success mb-3 align-self-start">Acompañamiento</span>
+                    <p class="text-muted small mb-3">
+                        Reciben información precisa, oportuna y transparente sobre la puntualidad, asistencia diaria y
+                        avances de aprendizaje de sus hijos.
+                    </p>
+                    <ul class="list-unstyled small text-secondary mt-auto">
+                        <li><i class="bi bi-check2 text-success me-1"></i> Notificaciones a tiempo</li>
+                        <li><i class="bi bi-check2 text-success me-1"></i> Boletines comprensibles</li>
+                        <li><i class="bi bi-check2 text-success me-1"></i> Compromiso escuela-familia</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN 4: ¿CÓMO FUNCIONA? (+ SIMULADOR INTERACTIVO)
+     ========================================================================= -->
+<section id="como-funciona" class="py-5 bg-light border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-blue">
+                <i class="bi bi-arrow-repeat"></i> 04. Flujo de Trabajo
+            </span>
+            <h2 class="section-title">¿Cómo funciona EduReport?</h2>
+            <p class="section-subtitle">
+                Un flujo pedagógico intuitivo estructurado en 4 etapas interconectadas que garantizan agilidad y
+                precisión.
+            </p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Paso 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number-badge">1</div>
+                    <h5 class="fw-bold mb-2">Configurar Ciclo & Matrícula</h5>
+                    <p class="text-muted small mb-0">
+                        Estructuración de grados (1.º a 6.º de Secundaria) y secciones con código RNE de estudiantes,
+                        datos familiares y contactos de emergencia.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Paso 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number-badge">2</div>
+                    <h5 class="fw-bold mb-2">Registro Diario Ágil</h5>
+                    <p class="text-muted small mb-0">
+                        Pase de lista con estados oficiales: <strong>P</strong> (Presente), <strong>T</strong>
+                        (Tardanza), <strong>A</strong> (Ausente) y <strong>E</strong> (Excusa médica/justificada).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Paso 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number-badge">3</div>
+                    <h5 class="fw-bold mb-2">Reglas de Negocio en Vivo</h5>
+                    <p class="text-muted small mb-0">
+                        El motor computacional audita las inasistencias en tiempo real. Al detectarse la <strong>3.ª
+                            falta</strong>, se dispara de inmediato una alerta roja.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Paso 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number-badge">4</div>
+                    <h5 class="fw-bold mb-2">Emisión Automatizada</h5>
+                    <p class="text-muted small mb-0">
+                        Generación con un solo clic de la ficha oficial de citación a tutor, sábanas completas de
+                        calificaciones y boletines de seguimiento listos para PDF.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMULADOR INTERACTIVO INTEGRADO -->
+        <div class="p-4 p-md-5 bg-white rounded-4 border shadow-sm" id="simulador">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <span
+                        class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill mb-2">
+                        <i class="bi bi-lightning-charge-fill me-1"></i> Demostración Interactiva en Vivo
+                    </span>
+                    <h3 class="fw-bold mb-3">Prueba la Regla Pedagógica de 3 Ausencias</h3>
+                    <p class="text-secondary mb-3">
+                        Experimenta directamente cómo actúa el motor de reglas de EduReport cuando un estudiante acumula
+                        inasistencias en el aula.
+                    </p>
+                    <div class="alert alert-info border-0 rounded-4 mb-3">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-info-circle-fill text-info fs-5 mt-1"></i>
+                            <small class="text-secondary">
+                                <strong>Regla curricular:</strong> 3 faltas activan automáticamente la intervención del
+                                Departamento de Orientación y habilitan la emisión de la circular formal de citación.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caja del Simulador -->
+                <div class="col-lg-6">
+                    <div class="simulator-box" id="simSimulatorBox">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div>
+                                <span class="text-muted small text-uppercase fw-semibold d-block">Estudiante de
+                                    Prueba</span>
+                                <h6 class="fw-bold mb-0">Carlos E. Rosario &bull; 4.º de Secundaria (Sección A)</h6>
+                            </div>
+                            <div id="simAlertBadge" class="badge bg-danger text-white px-3 py-2 rounded-pill d-none">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ALERTA ACTIVADA!
+                            </div>
+                        </div>
+
+                        <!-- Indicador visual de 3 ausencias -->
+                        <div class="text-center my-3">
+                            <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                                <div class="absence-dot" id="simDot1">1</div>
+                                <span class="text-muted">&bull;</span>
+                                <div class="absence-dot" id="simDot2">2</div>
+                                <span class="text-muted">&bull;</span>
+                                <div class="absence-dot" id="simDot3">3</div>
+                            </div>
+                            <h2 class="display-6 fw-bold mb-1"><span id="simAbsenceCount">0</span> / 3</h2>
+                            <div id="simStatusText" class="mt-2">
+                                <span class="text-success fw-medium"><i class="bi bi-check-circle-fill me-1"></i>
+                                    Asistencia normal (0 ausencias).</span>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción de la Simulación -->
+                        <div class="d-flex flex-wrap gap-2 justify-content-center mt-3 pt-3 border-top">
+                            <button class="btn btn-danger rounded-pill px-3" id="simBtnAddAbsence">
+                                <i class="bi bi-person-x me-1"></i> Registrar Falta (+1)
+                            </button>
+                            <button class="btn btn-outline-secondary rounded-pill px-3" id="simBtnReset">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Reiniciar
+                            </button>
+                            <button class="btn btn-warning rounded-pill px-3 text-dark fw-bold disabled"
+                                id="simBtnGenerateReport" disabled>
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Emitir Ficha de Citación
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN 5: PRINCIPALES FUNCIONALIDADES
+     ========================================================================= -->
+<section id="funcionalidades" class="py-5 bg-white border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-purple">
+                <i class="bi bi-stars"></i> 05. Módulos & Capacidades
+            </span>
+            <h2 class="section-title">Principales Funcionalidades</h2>
+            <p class="section-subtitle">
+                Diseñadas con rigurosidad para responder a las exigencias operativas diarias de la educación secundaria.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Funcionalidad 1 -->
+            <div class="col-md-6 col-lg-4">
                 <div class="modern-card p-4">
                     <div class="card-icon icon-blue">
-                        <i class="bi bi-mortarboard"></i>
+                        <i class="bi bi-check2-square"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Primer y Segundo Ciclo</h5>
+                    <h5 class="fw-bold mb-2">Pase de Lista Inteligente (P, T, A, E)</h5>
                     <p class="text-muted small mb-0">
-                        Gestión curricular de 1.º a 6.º de Secundaria, control de matrícula y expedientes de estudiantes por sección.
+                        Registro diario de asistencia con los 4 estados normativos: Presente, Tardanza, Ausente y Excusa
+                        justificada, con recálculo automático de porcentajes de asistencia por período.
                     </p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-3">
+            <!-- Funcionalidad 2 -->
+            <div class="col-md-6 col-lg-4">
                 <div class="modern-card p-4">
                     <div class="card-icon icon-rose">
-                        <i class="bi bi-calendar2-check"></i>
+                        <i class="bi bi-bell-fill"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Control de Asistencia</h5>
+                    <h5 class="fw-bold mb-2">Motor de Alerta Temprana (3 Faltas)</h5>
                     <p class="text-muted small mb-0">
-                        Pase de lista diario con registro de presentes, ausencias, tardanzas y justificaciones, con disparo automático de alertas.
+                        Monitoreo continuo que identifica estudiantes al alcanzar 3 ausencias acumuladas, emitiendo
+                        avisos visuales prioritarios para la intervención pedagógica oportuna.
                     </p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-3">
+            <!-- Funcionalidad 3 -->
+            <div class="col-md-6 col-lg-4">
                 <div class="modern-card p-4">
                     <div class="card-icon icon-emerald">
-                        <i class="bi bi-journal-check"></i>
+                        <i class="bi bi-award"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Evaluación P1 a P4</h5>
+                    <h5 class="fw-bold mb-2">Evaluación por Competencias & P1-P4</h5>
                     <p class="text-muted small mb-0">
-                        Seguimiento continuo por competencias fundamentales e indicadores de logro, con módulo de recuperación pedagógica (&lt; 70 pts).
+                        Estructura completa de períodos evaluativos (P1, P2, P3 y P4) con ponderaciones por indicadores
+                        de logro y gestión de Recuperación Pedagógica (RP) para notas inferiores a 70 puntos.
                     </p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-3">
+            <!-- Funcionalidad 4 -->
+            <div class="col-md-6 col-lg-4">
                 <div class="modern-card p-4">
                     <div class="card-icon icon-purple">
-                        <i class="bi bi-printer"></i>
+                        <i class="bi bi-person-badge"></i>
                     </div>
-                    <h5 class="fw-bold mb-2">Reportes e Impresión</h5>
+                    <h5 class="fw-bold mb-2">Expediente Integral del Estudiante</h5>
                     <p class="text-muted small mb-0">
-                        Generación de boletines individuales, sábanas oficiales del curso y fichas de seguimiento con soporte nativo de impresión y PDF.
+                        Ficha completa con datos personales, número de RNE, fecha de nacimiento, condición inicial
+                        (Nuevo / Repitente), datos del tutor y teléfonos de emergencia.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Funcionalidad 5 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-sky">
+                        <i class="bi bi-printer-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Reportes Oficiales & Soporte PDF</h5>
+                    <p class="text-muted small mb-0">
+                        Plantillas formateadas listas para impresión y descarga en PDF: fichas de seguimiento con
+                        espacios de firma institucional, sábanas de curso y actas consolidadas.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Funcionalidad 6 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-amber">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Panel Analítico con Gráficos</h5>
+                    <p class="text-muted small mb-0">
+                        Métricas en tiempo real visualizadas mediante Chart.js: distribución de matrícula por ciclo,
+                        índice de ausentismo por sección y estudiantes en estado de alerta.
                     </p>
                 </div>
             </div>
@@ -208,15 +710,502 @@
     </div>
 </section>
 
-<!-- Modal de Vista Previa del Informe de Asistencia -->
+<!-- =========================================================================
+     SECCIÓN 6: TECNOLOGÍAS UTILIZADAS
+     ========================================================================= -->
+<section id="tecnologias" class="py-5 bg-light border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-blue">
+                <i class="bi bi-stack"></i> 06. Stack Tecnológico
+            </span>
+            <h2 class="section-title">Tecnologías Utilizadas</h2>
+            <p class="section-subtitle">
+                Arquitectura construida sobre un stack moderno, confiable, sin dependencias superfluas y de alto
+                rendimiento.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Python -->
+            <div class="col-md-6 col-lg-4">
+                <div class="tech-box">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="card-icon icon-blue mb-0" style="width:44px; height:44px; font-size:1.2rem;">
+                            <i class="bi bi-filetype-py"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Python 3.12+</h6>
+                            <span class="badge bg-primary-subtle text-primary" style="font-size:0.7rem;">Lenguaje
+                                Core</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Núcleo backend que proporciona un desarrollo limpio, tipado robusto, procesamiento ágil de
+                        reglas y compatibilidad multiplataforma garantizada.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Flask -->
+            <div class="col-md-6 col-lg-4">
+                <div class="tech-box">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="card-icon icon-emerald mb-0" style="width:44px; height:44px; font-size:1.2rem;">
+                            <i class="bi bi-globe"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Flask 3.0.3</h6>
+                            <span class="badge bg-success-subtle text-success" style="font-size:0.7rem;">Framework
+                                Web</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Microframework web configurado mediante el patrón <em>Application Factory</em> y
+                        <em>Blueprints</em> modulares para un enrutamiento ordenado y desacoplado.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SQLAlchemy & SQLite -->
+            <div class="col-md-6 col-lg-4">
+                <div class="tech-box">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="card-icon icon-sky mb-0" style="width:44px; height:44px; font-size:1.2rem;">
+                            <i class="bi bi-database-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">SQLAlchemy & SQLite</h6>
+                            <span class="badge bg-info-subtle text-info" style="font-size:0.7rem;">Persistencia &
+                                ORM</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Capa ORM potente con migraciones automáticas y base de datos relacional ligera, autocontenida y
+                        sin necesidad de instalar servidores externos pesados.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bootstrap 5.3 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="tech-box">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="card-icon icon-purple mb-0" style="width:44px; height:44px; font-size:1.2rem;">
+                            <i class="bi bi-bootstrap-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Bootstrap 5.3 + Icons</h6>
+                            <span class="badge bg-purple-subtle text-purple"
+                                style="font-size:0.7rem; background:#faf5ff; color:#7c3aed;">Frontend & CSS</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Sistema de grilla 100% responsivo para móviles, tablets y monitores, complementado con
+                        tipografías Google Fonts y estilos CSS variables personalizados.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Chart.js -->
+            <div class="col-md-6 col-lg-4">
+                <div class="tech-box">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="card-icon icon-rose mb-0" style="width:44px; height:44px; font-size:1.2rem;">
+                            <i class="bi bi-pie-chart-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Chart.js</h6>
+                            <span class="badge bg-danger-subtle text-danger" style="font-size:0.7rem;">Data
+                                Visualization</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Biblioteca JavaScript para renderizar gráficos de barras y de dona en el panel de control,
+                        facilitando el análisis visual inmediato de asistencia.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Jinja2 & HTML5 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="tech-box">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="card-icon icon-amber mb-0" style="width:44px; height:44px; font-size:1.2rem;">
+                            <i class="bi bi-file-code-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">Jinja2 & HTML5 Semántico</h6>
+                            <span class="badge bg-warning-subtle text-warning" style="font-size:0.7rem;">Motor de
+                                Plantillas</span>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Herencia de plantillas modular con layouts reutilizables, bloques dinámicos y formatos de
+                        impresión adaptados a documentos escolares normativos.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN 7: ARQUITECTURA DEL SISTEMA
+     ========================================================================= -->
+<section id="arquitectura" class="py-5 bg-white border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-emerald">
+                <i class="bi bi-diagram-3-fill"></i> 07. Diseño Técnico
+            </span>
+            <h2 class="section-title">Arquitectura del Sistema</h2>
+            <p class="section-subtitle">
+                Estructurado bajo el principio de <strong>Arquitectura en Capas Desacopladas (Layered
+                    Architecture)</strong>, garantizando mantenibilidad, separación de responsabilidades y
+                escalabilidad.
+            </p>
+        </div>
+
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <!-- Capa 1: Presentación -->
+                <div class="arch-layer" style="border-left-color: #2563eb;">
+                    <div class="arch-layer-title">
+                        <i class="bi bi-browser-chrome text-primary fs-5"></i>
+                        <span>Capa de Presentación (Controladores & Vistas)</span>
+                    </div>
+                    <p class="small text-muted mb-2">
+                        Maneja las solicitudes HTTP, renderiza las plantillas Jinja2 y expone endpoints JSON. Organizada
+                        en <strong>Blueprints</strong> modulares:
+                    </p>
+                    <div class="d-flex flex-wrap gap-1">
+                        <span class="badge bg-light text-dark border">main_bp (Landing & Dashboard)</span>
+                        <span class="badge bg-light text-dark border">student_bp (Estudiantes)</span>
+                        <span class="badge bg-light text-dark border">attendance_bp (Asistencias & Alertas)</span>
+                        <span class="badge bg-light text-dark border">report_bp (Generación de PDF/Impresión)</span>
+                    </div>
+                </div>
+
+                <!-- Capa 2: Servicios -->
+                <div class="arch-layer" style="border-left-color: #0d9488;">
+                    <div class="arch-layer-title">
+                        <i class="bi bi-gear-wide-connected text-success fs-5"></i>
+                        <span>Capa de Servicios (Lógica de Negocio Pura)</span>
+                    </div>
+                    <p class="small text-muted mb-2">
+                        Encapsula las reglas pedagógicas independientes de la capa web. Aquí reside la <strong>detección
+                            de la regla de 3 ausencias</strong>, cálculo de promedios de períodos y validación de
+                        matrículas:
+                    </p>
+                    <div class="d-flex flex-wrap gap-1">
+                        <span class="badge bg-success-subtle text-success">attendance_service.py</span>
+                        <span class="badge bg-success-subtle text-success">student_service.py</span>
+                        <span class="badge bg-success-subtle text-success">evaluation_service.py</span>
+                    </div>
+                </div>
+
+                <!-- Capa 3: Persistencia -->
+                <div class="arch-layer" style="border-left-color: #7c3aed;">
+                    <div class="arch-layer-title">
+                        <i class="bi bi-database text-purple fs-5"></i>
+                        <span>Capa de Persistencia & Datos (Modelos SQLAlchemy)</span>
+                    </div>
+                    <p class="small text-muted mb-2">
+                        Define el esquema relacional íntegro con claves primarias, foráneas e índices optimizados
+                        almacenados en SQLite:
+                    </p>
+                    <div class="d-flex flex-wrap gap-1">
+                        <span class="badge bg-purple-subtle text-purple"
+                            style="background:#faf5ff; color:#7c3aed;">Student</span>
+                        <span class="badge bg-purple-subtle text-purple"
+                            style="background:#faf5ff; color:#7c3aed;">Cycle (1.º y 2.º)</span>
+                        <span class="badge bg-purple-subtle text-purple"
+                            style="background:#faf5ff; color:#7c3aed;">GradeLevel (1.º a 6.º)</span>
+                        <span class="badge bg-purple-subtle text-purple"
+                            style="background:#faf5ff; color:#7c3aed;">Section (A, B)</span>
+                        <span class="badge bg-purple-subtle text-purple"
+                            style="background:#faf5ff; color:#7c3aed;">Attendance (P, T, A, E)</span>
+                        <span class="badge bg-purple-subtle text-purple"
+                            style="background:#faf5ff; color:#7c3aed;">Evaluation (P1 a P4)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="arch-preview-card">
+                    <div
+                        class="d-flex align-items-center justify-content-between text-white-50 pb-2 border-bottom border-secondary mb-3">
+                        <small class="font-monospace"><i class="bi bi-diagram-3 me-1 text-info"></i> Diagrama de
+                            Flujo</small>
+                        <span class="badge bg-primary">EduReport Flow</span>
+                    </div>
+                    <div class="p-3 bg-dark rounded-3 text-center text-light">
+                        <div class="p-2 border border-primary rounded-3 mb-2 bg-primary bg-opacity-25 small fw-bold">
+                            Cliente Web (Navegador Desktop / Móvil)
+                        </div>
+                        <i class="bi bi-arrow-down text-info"></i>
+                        <div class="p-2 border border-info rounded-3 my-2 bg-info bg-opacity-25 small fw-bold">
+                            Flask Application Factory & Blueprints
+                        </div>
+                        <i class="bi bi-arrow-down text-success"></i>
+                        <div class="p-2 border border-success rounded-3 my-2 bg-success bg-opacity-25 small fw-bold">
+                            Capa de Servicios & Regla de 3 Ausencias
+                        </div>
+                        <i class="bi bi-arrow-down text-warning"></i>
+                        <div
+                            class="p-2 border border-warning rounded-3 mt-2 bg-warning bg-opacity-25 small fw-bold text-warning">
+                            SQLAlchemy ORM & Base de Datos SQLite
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('main.arquitectura') }}"
+                            class="btn btn-sm btn-outline-info rounded-pill px-3">
+                            <i class="bi bi-eye me-1"></i> Ver Página Completa de Arquitectura
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN 8: ESTRUCTURA DEL PROYECTO
+     ========================================================================= -->
+<section id="estructura" class="py-5 bg-light border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-purple">
+                <i class="bi bi-folder-fill"></i> 08. Organización de Código
+            </span>
+            <h2 class="section-title">Estructura del Proyecto</h2>
+            <p class="section-subtitle">
+                Diseño de directorios profesional, modular y estandarizado conforme a las mejores prácticas de la
+                comunidad Python.
+            </p>
+        </div>
+
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="t-dot t-dot-red"></span>
+                            <span class="t-dot t-dot-yellow"></span>
+                            <span class="t-dot t-dot-green"></span>
+                        </div>
+                        <span class="terminal-title">EduReport/ - Árbol del Proyecto</span>
+                    </div>
+                    <pre
+                        class="terminal-body mb-0"><code><span class="tree-folder">EduReport/</span>
+├── <span class="tree-folder">app/</span>                          <span class="tree-comment"># Paquete principal de la aplicación</span>
+│   ├── <span class="tree-file">__init__.py</span>               <span class="tree-comment"># Application Factory (create_app)</span>
+│   ├── <span class="tree-file">config.py</span>                 <span class="tree-comment"># Configuraciones (Dev, Test, Prod)</span>
+│   ├── <span class="tree-folder">models/</span>                   <span class="tree-comment"># Entidades ORM SQLAlchemy</span>
+│   │   ├── <span class="tree-file">academic.py</span>           <span class="tree-comment"># Student, Cycle, GradeLevel, Section</span>
+│   │   ├── <span class="tree-file">attendance.py</span>         <span class="tree-comment"># Attendance (P, T, A, E)</span>
+│   │   └── <span class="tree-file">evaluation.py</span>         <span class="tree-comment"># Evaluation, Period, Recuperación</span>
+│   ├── <span class="tree-folder">routes/</span>                   <span class="tree-comment"># Blueprints modulares Flask</span>
+│   │   ├── <span class="tree-file">main_routes.py</span>        <span class="tree-comment"># Landing, Dashboard, Entorno, Arquitectura</span>
+│   │   ├── <span class="tree-file">student_routes.py</span>     <span class="tree-comment"># CRUD y listado de matrícula</span>
+│   │   ├── <span class="tree-file">attendance_routes.py</span>  <span class="tree-comment"># Pase de lista y panel de 3 faltas</span>
+│   │   └── <span class="tree-file">report_routes.py</span>      <span class="tree-comment"># Sábanas de notas e informes PDF</span>
+│   ├── <span class="tree-folder">services/</span>                 <span class="tree-comment"># Lógica de negocio y reglas</span>
+│   │   ├── <span class="tree-file">attendance_service.py</span> <span class="tree-comment"># Regla preventiva de 3 ausencias</span>
+│   │   └── <span class="tree-file">student_service.py</span>    <span class="tree-comment"># Consultas y agregados de estudiantes</span>
+│   ├── <span class="tree-folder">static/</span>                   <span class="tree-comment"># Recursos web del cliente</span>
+│   │   ├── <span class="tree-folder">css/</span> <span class="tree-file">style.css</span>        <span class="tree-comment"># Hoja de estilos moderna y tokens</span>
+│   │   └── <span class="tree-folder">js/</span>  <span class="tree-file">main.js</span>          <span class="tree-comment"># Simulador interactivo y utilidades</span>
+│   └── <span class="tree-folder">templates/</span>                <span class="tree-comment"># Plantillas Jinja2 responsivas</span>
+│       ├── <span class="tree-file">base.html</span>             <span class="tree-comment"># Layout maestro institucional</span>
+│       ├── <span class="tree-file">index.html</span>            <span class="tree-comment"># Landing page pública</span>
+│       └── <span class="tree-file">dashboard.html</span>        <span class="tree-comment"># Panel estadístico con Chart.js</span>
+├── <span class="tree-folder">database/</span>                     <span class="tree-comment"># Scripts de inicialización y semillas</span>
+├── <span class="tree-folder">docs/</span>                         <span class="tree-comment"># Documentación técnica y diagramas</span>
+├── <span class="tree-folder">instance/</span>                     <span class="tree-comment"># Base de datos SQLite local</span>
+├── <span class="tree-file">run.py</span>                        <span class="tree-comment"># Punto de arranque del servidor</span>
+└── <span class="tree-file">requirements.txt</span>              <span class="tree-comment"># Dependencias oficiales de Python</span></code></pre>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="d-flex flex-column gap-3">
+                    <div class="p-3 bg-white border rounded-3 shadow-sm">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i class="bi bi-box-seam-fill text-primary"></i>
+                            <h6 class="fw-bold mb-0">Fábrica de Aplicaciones (app/__init__.py)</h6>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            Inicializa extensiones (SQLAlchemy), registra Blueprints de forma desacoplada e inicializa
+                            automáticamente la base de datos si es la primera ejecución.
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-white border rounded-3 shadow-sm">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i class="bi bi-layers-fill text-success"></i>
+                            <h6 class="fw-bold mb-0">Servicios Aislados (app/services/)</h6>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            Evita la concentración de lógica en las rutas, facilitando pruebas unitarias y manteniendo
+                            la integridad de las reglas escolares.
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-white border rounded-3 shadow-sm">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i class="bi bi-file-earmark-code-fill text-purple"></i>
+                            <h6 class="fw-bold mb-0">Modularidad de Rutas (app/routes/)</h6>
+                        </div>
+                        <p class="small text-muted mb-0">
+                            Cada área funcional del centro (asistencia, calificaciones, matrícula, reportes) posee su
+                            propio archivo de rutas dedicado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN 9: CÓMO EJECUTAR EL PROYECTO
+     ========================================================================= -->
+<section id="ejecucion" class="py-5 bg-white border-bottom">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="section-badge badge-emerald">
+                <i class="bi bi-play-circle-fill"></i> 09. Despliegue Rápido
+            </span>
+            <h2 class="section-title">Cómo Ejecutar el Proyecto</h2>
+            <p class="section-subtitle">
+                Sigue estos sencillos pasos para levantar EduReport localmente en cualquier entorno (Windows, macOS o
+                Linux).
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-10">
+                <div class="row g-4">
+                    <!-- Paso 1 -->
+                    <div class="col-md-6">
+                        <div class="exec-step-card h-100">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <div class="exec-step-num">1</div>
+                                <h6 class="fw-bold mb-0">Crear el Entorno Virtual</h6>
+                            </div>
+                            <p class="small text-muted mb-2">Aísla las dependencias del proyecto en una carpeta
+                                dedicada:</p>
+                            <code class="cmd-badge">python -m venv .venv</code>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2 -->
+                    <div class="col-md-6">
+                        <div class="exec-step-card h-100">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <div class="exec-step-num">2</div>
+                                <h6 class="fw-bold mb-0">Activar el Entorno Virtual</h6>
+                            </div>
+                            <p class="small text-muted mb-2">En Windows PowerShell o CMD:</p>
+                            <code class="cmd-badge">.\.venv\Scripts\activate</code>
+                            <small class="text-muted d-block mt-1" style="font-size:0.75rem;">(En Linux/Mac:
+                                <code>source .venv/bin/activate</code>)</small>
+                        </div>
+                    </div>
+
+                    <!-- Paso 3 -->
+                    <div class="col-md-6">
+                        <div class="exec-step-card h-100">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <div class="exec-step-num">3</div>
+                                <h6 class="fw-bold mb-0">Instalar Dependencias</h6>
+                            </div>
+                            <p class="small text-muted mb-2">Descarga Flask, SQLAlchemy y las librerías necesarias:</p>
+                            <code class="cmd-badge">pip install -r requirements.txt</code>
+                        </div>
+                    </div>
+
+                    <!-- Paso 4 -->
+                    <div class="col-md-6">
+                        <div class="exec-step-card h-100">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <div class="exec-step-num">4</div>
+                                <h6 class="fw-bold mb-0">Lanzar el Servidor Flask</h6>
+                            </div>
+                            <p class="small text-muted mb-2">La app autosemilla datos de prueba en la primera ejecución:
+                            </p>
+                            <code class="cmd-badge">python run.py</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Punto de Acceso -->
+                <div class="mt-4 p-4 bg-light rounded-4 border text-center">
+                    <div class="d-flex flex-wrap align-items-center justify-content-center gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-globe2 text-primary fs-4"></i>
+                            <span class="fw-semibold">Abre tu navegador en:</span>
+                            <a href="http://127.0.0.1:5000" target="_blank"
+                                class="fw-bold fs-6 text-primary text-decoration-none">
+                                http://127.0.0.1:5000
+                            </a>
+                        </div>
+                        <a href="{{ url_for('main.dashboard') }}"
+                            class="btn btn-primary rounded-pill px-4 py-2 fw-semibold">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar al sistema ahora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     BANNER CTA FINAL: ENTRAR AL SISTEMA
+     ========================================================================= -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="cta-banner text-center">
+            <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold mb-3 shadow-sm">
+                <i class="bi bi-mortarboard-fill me-1"></i> EduReport Nivel Secundario
+            </span>
+            <h2 class="display-6 fw-bold mb-3">
+                ¿Listo para transformar la gestión de tu centro educativo?
+            </h2>
+            <p class="lead text-white-50 max-w-xl mx-auto mb-4" style="max-width: 650px;">
+                Centraliza el pase de lista, automatiza la detección de 3 ausencias y genera reportes académicos
+                oficiales con rigurosidad y rapidez.
+            </p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="{{ url_for('main.dashboard') }}"
+                    class="btn btn-light text-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg"
+                    id="btnCtaEntrarSistema">
+                    <i class="bi bi-box-arrow-in-right me-2 fs-5"></i> Entrar al sistema
+                </a>
+                <a href="{{ url_for('main.entorno') }}"
+                    class="btn btn-outline-light btn-lg rounded-pill px-4 py-3 fw-semibold">
+                    <i class="bi bi-terminal me-2"></i> Diagnóstico del Entorno
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     MODAL DE VISTA PREVIA: INFORME DE SEGUIMIENTO (SIMULADOR)
+     ========================================================================= -->
 <div class="modal fade" id="reportPreviewModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
             <div class="modal-header bg-danger text-white rounded-top-4">
                 <h5 class="modal-title fw-bold" id="reportModalLabel">
-                    <i class="bi bi-file-earmark-text-fill me-2"></i> Informe de Seguimiento de Asistencia
+                    <i class="bi bi-file-earmark-text-fill me-2"></i> Informe Oficial de Seguimiento de Asistencia
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
             </div>
             <div class="modal-body p-4">
                 <div class="border p-4 rounded-3 bg-white" style="font-family: 'Times New Roman', serif;">
@@ -228,67 +1217,70 @@
 
                     <div class="row g-2 mb-3 small">
                         <div class="col-6"><strong>Estudiante:</strong> Carlos E. Rosario</div>
-                        <div class="col-6"><strong>Matrícula:</strong> 2026-SEC4-019</div>
+                        <div class="col-6"><strong>Matrícula (RNE):</strong> 2026-SEC4-019</div>
                         <div class="col-6"><strong>Grado / Sección:</strong> 4.º de Secundaria - Sección A</div>
-                        <div class="col-6"><strong>Ciclo:</strong> Segundo Ciclo del Nivel Secundario</div>
+                        <div class="col-6"><strong>Ciclo Curricular:</strong> Segundo Ciclo del Nivel Secundario</div>
                     </div>
 
-                    <h6 class="fw-bold small border-bottom pb-1">Historial de Faltas Registradas:</h6>
+                    <h6 class="fw-bold small border-bottom pb-1">Historial de Inasistencias Registradas:</h6>
                     <table class="table table-sm table-bordered small mb-3">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
                                 <th>Fecha</th>
                                 <th>Estado</th>
-                                <th>Observación del Docente</th>
+                                <th>Observación Pedagógica</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
                                 <td>12 de Septiembre</td>
-                                <td class="text-danger fw-bold">Ausente</td>
-                                <td>Sin justificación reportada</td>
+                                <td class="text-danger fw-bold">Ausente (A)</td>
+                                <td>Sin justificación reportada por el tutor</td>
                             </tr>
                             <tr>
                                 <td>2</td>
                                 <td>18 de Septiembre</td>
-                                <td class="text-danger fw-bold">Ausente</td>
-                                <td>No se presentó a clases</td>
+                                <td class="text-danger fw-bold">Ausente (A)</td>
+                                <td>No asistió a la jornada de clases</td>
                             </tr>
                             <tr>
                                 <td>3</td>
                                 <td>25 de Septiembre</td>
-                                <td class="text-danger fw-bold">Ausente</td>
-                                <td>Tercera falta acumulada (Alerta activada)</td>
+                                <td class="text-danger fw-bold">Ausente (A)</td>
+                                <td>Tercera falta acumulada &bull; Disparo de alerta oficial</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <div class="alert alert-warning p-2 small mb-4">
-                        <strong>Motivo de Intervención:</strong> Se solicita formalmente la comparecencia del padre, madre o tutor legal ante el Departamento de Orientación Escolar para evaluar las causas del ausentismo y firmar el acuerdo de compromiso pedagógico.
+                        <strong>Motivo de Intervención:</strong> Se solicita formalmente la comparecencia del padre,
+                        madre o tutor legal ante el Departamento de Orientación y Psicología para evaluar las causas del
+                        ausentismo y firmar el acuerdo de compromiso pedagógico.
                     </div>
 
                     <div class="row text-center pt-4 mt-4 border-top">
                         <div class="col-4">
                             <hr class="w-75 mx-auto mb-1">
-                            <small class="text-muted">Firma del Docente</small>
+                            <small class="text-muted">Firma del Docente Titular</small>
                         </div>
                         <div class="col-4">
                             <hr class="w-75 mx-auto mb-1">
-                            <small class="text-muted">Firma de Orientación</small>
+                            <small class="text-muted">Firma de Orientación / Psicología</small>
                         </div>
                         <div class="col-4">
                             <hr class="w-75 mx-auto mb-1">
-                            <small class="text-muted">Firma del Padre / Tutor</small>
+                            <small class="text-muted">Firma del Padre / Tutor Legal</small>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer bg-light rounded-bottom-4">
-                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary rounded-pill px-4"
+                    data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary rounded-pill px-4" onclick="window.print()">
-                    <i class="bi bi-printer-fill me-1"></i> Imprimir / Guardar PDF
+                    <i class="bi bi-printer-fill me-1"></i> Imprimir Ficha
                 </button>
             </div>
         </div>

@@ -1,0 +1,115 @@
+﻿{% extends 'base.html' %}
+{% block title %}Ficha de Seguimiento — {{ student.full_name }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1"><i class="bi bi-journal-bookmark text-primary me-2"></i>Ficha de Seguimiento</h1>
+      <p class="text-muted mb-0">
+        {{ student.full_name }} &bull; <code>{{ student.registration_number }}</code>
+        &bull; {{ student.section.nombre or student.section.name }}
+      </p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('seguimiento.nuevo', student_id=student.id) }}"
+         class="btn btn-primary rounded-pill px-4 shadow-sm">
+        <i class="bi bi-plus-circle me-1"></i> Nuevo Seguimiento
+      </a>
+      <a href="{{ url_for('students.detail', student_id=student.id) }}"
+         class="btn btn-outline-secondary rounded-pill px-3">
+        <i class="bi bi-person me-1"></i> Ficha Estudiantil
+      </a>
+      {% if att_summary.has_alert %}
+      <a href="{{ url_for('reports.attendance_report', student_id=student.id) }}"
+         class="btn btn-outline-warning rounded-pill px-3" target="_blank">
+        <i class="bi bi-file-earmark-pdf me-1"></i> Informe PDF
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Alerta activa -->
+  {% if att_summary.has_alert %}
+  <div class="alert alert-danger d-flex align-items-center gap-3 rounded-4 mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+    <div>
+      <strong>Alerta Activa:</strong> {{ att_summary.ausentes }} ausencias acumuladas.
+      Tutor: <strong>{{ student.tutor_name or 'No registrado' }}</strong>
+      {% if student.tutor_phone %}— {{ student.tutor_phone }}{% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Resumen de asistencia -->
+  <div class="row g-2 mb-4">
+    <div class="col-3 col-lg"><div class="modern-card p-3 text-center"><div class="fw-bold text-success fs-4">{{ att_summary.presentes }}</div><div class="small text-muted">Presentes</div></div></div>
+    <div class="col-3 col-lg"><div class="modern-card p-3 text-center"><div class="fw-bold text-warning fs-4">{{ att_summary.tardanzas }}</div><div class="small text-muted">Tardanzas</div></div></div>
+    <div class="col-3 col-lg"><div class="modern-card p-3 text-center {{ 'border-danger' if att_summary.ausentes >= 3 else '' }}"><div class="fw-bold text-danger fs-4">{{ att_summary.ausentes }}</div><div class="small text-muted">Ausencias</div></div></div>
+    <div class="col-3 col-lg"><div class="modern-card p-3 text-center"><div class="fw-bold text-info fs-4">{{ att_summary.excusas }}</div><div class="small text-muted">Excusas</div></div></div>
+    <div class="col-12 col-lg-4">
+      <div class="modern-card p-3">
+        <div class="d-flex justify-content-between mb-1 small"><span>% Asistencia</span><strong>{{ att_summary.porcentaje }}%</strong></div>
+        <div class="progress rounded-pill" style="height:8px;">
+          <div class="progress-bar {{ 'bg-success' if att_summary.porcentaje >= 75 else 'bg-danger' }}" style="width:{{ att_summary.porcentaje }}%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historial de seguimientos -->
+  <div class="modern-card p-0 overflow-hidden">
+    <div class="p-4 border-bottom">
+      <h5 class="fw-bold mb-0">Historial de Seguimientos ({{ seguimientos|length }})</h5>
+    </div>
+    {% if seguimientos %}
+    {% set tipo_colors = {'Asistencia': 'danger', 'Academico': 'primary', 'Conductual': 'warning', 'Reconocimiento': 'success', 'General': 'secondary'} %}
+    {% set status_colors = {'Abierto': 'danger', 'En Proceso': 'warning', 'Resuelto': 'success', 'Cerrado': 'secondary'} %}
+    <div class="p-4 d-flex flex-column gap-3">
+      {% for seg in seguimientos %}
+      <div class="border rounded-4 p-4 {{ 'border-danger' if seg.status == 'Abierto' else 'border-light' }}">
+        <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="badge bg-{{ tipo_colors.get(seg.tipo, 'secondary') }} rounded-pill px-3">{{ seg.tipo }}</span>
+            <span class="badge bg-{{ status_colors.get(seg.status, 'secondary') }} rounded-pill px-2">{{ seg.status }}</span>
+            <span class="text-muted small">{{ seg.fecha.strftime('%d/%m/%Y') if seg.fecha else '—' }}</span>
+          </div>
+          <div class="d-flex gap-1">
+            <a href="{{ url_for('seguimiento.editar', seg_id=seg.id) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-2">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form action="{{ url_for('seguimiento.eliminar', seg_id=seg.id) }}" method="POST"
+                  onsubmit="return confirm('Eliminar este seguimiento?')">
+              <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="fw-semibold mb-1">{{ seg.motivo }}</div>
+        {% if seg.descripcion %}
+        <p class="text-muted small mb-2">{{ seg.descripcion }}</p>
+        {% endif %}
+        {% if seg.acciones_acordadas %}
+        <div class="bg-light rounded-3 p-2 small mb-2">
+          <strong>Acciones Acordadas:</strong><br>
+          {{ seg.acciones_acordadas | replace('\n', '<br>') | safe }}
+        </div>
+        {% endif %}
+        <div class="small text-muted">
+          <i class="bi bi-person-badge me-1"></i>{{ seg.responsable }}
+          {% if seg.fecha_resolucion %}
+          &bull; Resuelto: {{ seg.fecha_resolucion.strftime('%d/%m/%Y') }}
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="p-5 text-center text-muted">
+      <i class="bi bi-journal-x fs-1 d-block mb-2"></i>
+      Sin registros de seguimiento para este estudiante.
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

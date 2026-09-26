@@ -1,0 +1,213 @@
+﻿{% extends 'base.html' %}
+{% block title %}Asistencia de {{ student.full_name }} — EduReport{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Encabezado -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1">
+        <i class="bi bi-calendar-check me-2 text-primary"></i>
+        Historial de Asistencia
+      </h1>
+      <p class="text-muted mb-0">
+        {{ student.full_name }} &bull; <code>{{ student.registration_number }}</code>
+        &bull; {{ student.section.nombre or student.section.name }}
+      </p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('students.detail', student_id=student.id) }}" class="btn btn-outline-secondary rounded-pill px-3">
+        <i class="bi bi-person me-1"></i> Ficha del Estudiante
+      </a>
+      {% if summary.has_alert %}
+      <a href="{{ url_for('reports.attendance_report', student_id=student.id) }}"
+         class="btn btn-warning rounded-pill px-4 fw-semibold shadow-sm" target="_blank">
+        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Generar Informe
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Alerta de 3 ausencias -->
+  {% if summary.has_alert %}
+  <div class="alert alert-danger d-flex align-items-center gap-3 rounded-4 shadow-sm mb-4 badge-pulse-border" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+    <div>
+      <strong>¡Alerta Activa!</strong>
+      Este estudiante ha acumulado <strong>{{ summary.ausentes }} ausencias</strong>.
+      Según la normativa MINERD, se requiere emitir un informe formal de seguimiento
+      y notificar al tutor: <strong>{{ student.tutor_name or 'No registrado' }}</strong>
+      {% if student.tutor_phone %}
+        — <a href="https://wa.me/{{ student.tutor_phone|replace('-','')|replace('(','') |replace(')','') |replace(' ','') }}"
+             class="text-danger fw-semibold" target="_blank">
+          <i class="bi bi-whatsapp me-1"></i>{{ student.tutor_phone }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Tarjetas P/T/A/E + Porcentaje -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold text-success">{{ summary.presentes }}</div>
+        <div class="badge bg-success mb-1 px-3 fs-6">P</div>
+        <div class="small text-muted">Presentes</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold text-warning">{{ summary.tardanzas }}</div>
+        <div class="badge bg-warning text-dark mb-1 px-3 fs-6">T</div>
+        <div class="small text-muted">Tardanzas</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg">
+      <div class="modern-card p-4 text-center h-100 {{ 'border-danger border-2' if summary.ausentes >= 3 else '' }}">
+        <div class="fs-1 fw-bold text-danger">{{ summary.ausentes }}</div>
+        <div class="badge bg-danger mb-1 px-3 fs-6">A</div>
+        <div class="small text-muted">Ausencias</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold text-info">{{ summary.excusas }}</div>
+        <div class="badge bg-info text-dark mb-1 px-3 fs-6">E</div>
+        <div class="small text-muted">Excusas</div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-3">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold {{ 'text-danger' if summary.porcentaje < 75 else 'text-success' }}">
+          {{ summary.porcentaje }}%
+        </div>
+        <div class="small text-muted mb-2">Porcentaje de Asistencia</div>
+        <div class="progress rounded-pill" style="height:10px;">
+          <div class="progress-bar {{ 'bg-danger' if summary.porcentaje < 75 else 'bg-success' }}"
+               style="width:{{ summary.porcentaje }}%"></div>
+        </div>
+        <div class="small text-muted mt-1">{{ summary.total }} días registrados</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Formulario de registro individual -->
+    <div class="col-lg-4">
+      <div class="modern-card p-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle me-2 text-primary"></i>Registrar Asistencia</h5>
+        <form method="POST" action="{{ url_for('attendance.register_single', student_id=student.id) }}">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Fecha</label>
+            <input type="date" name="date" class="form-control rounded-3"
+                   value="{{ today_date if today_date else '' }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Estado</label>
+            <div class="d-flex gap-2 flex-wrap">
+              {% for code, label, color in [('Presente','P','success'),('Tardanza','T','warning'),('Ausente','A','danger'),('Excusa','E','info')] %}
+              <div class="form-check form-check-inline m-0">
+                <input class="form-check-input visually-hidden" type="radio" name="status"
+                       id="reg_{{ code }}" value="{{ code }}" {% if code == 'Presente' %}checked{% endif %}>
+                <label class="btn btn-sm btn-outline-{{ color }} fw-bold px-3" for="reg_{{ code }}">{{ label }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Observación (opcional)</label>
+            <input type="text" name="notes" class="form-control rounded-3" placeholder="Ej: Enfermedad documentada">
+          </div>
+          <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold">
+            <i class="bi bi-cloud-check-fill me-1"></i> Guardar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Historial de asistencia -->
+    <div class="col-lg-8">
+      <div class="modern-card p-0 overflow-hidden">
+        <div class="p-4 border-bottom">
+          <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Historial de Registros</h5>
+          <small class="text-muted">Mostrando los últimos {{ history|length }} registros</small>
+        </div>
+        {% if history %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light small text-uppercase fw-semibold">
+              <tr>
+                <th>Fecha</th>
+                <th class="text-center">Estado</th>
+                <th>Observación</th>
+                <th class="text-end">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in history %}
+              <tr>
+                <td class="fw-semibold">{{ record.date.strftime('%d/%m/%Y') if record.date else '—' }}</td>
+                <td class="text-center">
+                  {% if record.status in ('Presente', 'P') %}
+                    <span class="badge bg-success px-3">P — Presente</span>
+                  {% elif record.status in ('Tardanza', 'T') %}
+                    <span class="badge bg-warning text-dark px-3">T — Tardanza</span>
+                  {% elif record.status in ('Ausente', 'A') %}
+                    <span class="badge bg-danger px-3">A — Ausente</span>
+                  {% elif record.status in ('Excusa', 'E') %}
+                    <span class="badge bg-info text-dark px-3">E — Excusa</span>
+                  {% else %}
+                    <span class="badge bg-secondary px-3">{{ record.status }}</span>
+                  {% endif %}
+                </td>
+                <td class="text-muted small">{{ record.notes or '—' }}</td>
+                <td class="text-end">
+                  <form method="POST"
+                        action="{{ url_for('attendance.delete_record', record_id=record.id) }}"
+                        onsubmit="return confirm('¿Eliminar este registro?')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="p-5 text-center text-muted">
+          <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+          Sin registros de asistencia. Usa el formulario de la izquierda para añadir.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Highlight radio buttons on load and click
+document.querySelectorAll('input[type=radio]').forEach(r => {
+  const update = () => {
+    const name = r.name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(i => {
+      if (i.nextElementSibling) i.nextElementSibling.classList.remove('active');
+    });
+    if (r.checked && r.nextElementSibling) r.nextElementSibling.classList.add('active');
+  };
+  r.addEventListener('change', update);
+  if (r.checked) update();
+});
+
+// Set today as default date
+const dateInput = document.querySelector('input[type=date]');
+if (dateInput && !dateInput.value) {
+  dateInput.value = new Date().toISOString().slice(0,10);
+}
+</script>
+{% endblock %}

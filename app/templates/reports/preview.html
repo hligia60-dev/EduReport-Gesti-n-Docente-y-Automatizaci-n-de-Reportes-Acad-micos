@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Vista Previa — {{ tipo_reporte }}{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:900px;">
+  <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+    <a href="{{ url_for('reports.generar') }}" class="btn btn-outline-secondary rounded-pill px-3">
+      <i class="bi bi-arrow-left me-1"></i> Volver
+    </a>
+    <div>
+      <h1 class="fw-bold mb-0 fs-4"><i class="bi bi-eye text-primary me-2"></i>Vista Previa — Borrador</h1>
+      <p class="text-muted mb-0 small">Revisa y edita el texto antes de generar el PDF final.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-info rounded-4 mb-4 d-flex align-items-center gap-2" role="alert">
+    <i class="bi bi-info-circle-fill"></i>
+    <div>
+      <strong>Borrador generado con datos reales.</strong>
+      Puedes editar el texto libremente antes de imprimir. Sin datos = sin hechos inventados.
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Editor de texto -->
+    <div class="col-lg-7">
+      <div class="modern-card p-4 h-100">
+        <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square me-2 text-primary"></i>Editor de Borrador</h5>
+        <form method="POST" action="{{ url_for('reports.imprimir') }}" id="printForm">
+          <input type="hidden" name="tipo_reporte" value="{{ tipo_reporte }}">
+          <input type="hidden" name="student_id" value="{{ student.id if student else '' }}">
+          <input type="hidden" name="section_id" value="{{ section.id if section else '' }}">
+          <input type="hidden" name="period" value="{{ period }}">
+          <textarea name="texto_final" id="borrador-text" class="form-control rounded-3 font-monospace"
+                    rows="20" style="font-size:.82rem;line-height:1.6;">{{ borrador }}</textarea>
+          <div class="d-flex gap-2 mt-3 justify-content-end">
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3"
+                    onclick="document.getElementById('borrador-text').value = originalText">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Restablecer
+            </button>
+            <button type="submit" class="btn btn-outline-primary rounded-pill px-4 fw-semibold shadow-sm">
+              <i class="bi bi-printer-fill me-1"></i> Finalizar e Imprimir
+            </button>
+            <button type="submit" formaction="{{ url_for('reports.descargar_pdf') }}" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+              <i class="bi bi-file-earmark-pdf-fill me-1"></i> Descargar PDF Oficial
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Metadatos del reporte -->
+    <div class="col-lg-5">
+      <div class="modern-card p-4 mb-3">
+        <h6 class="fw-bold mb-3"><i class="bi bi-card-list me-2"></i>Parametros del Reporte</h6>
+        <table class="table table-sm table-borderless mb-0 small">
+          <tr><td class="text-muted">Tipo:</td><td class="fw-semibold">{{ tipo_reporte }}</td></tr>
+          <tr><td class="text-muted">Estudiante:</td><td>{{ student.full_name if student else '—' }}</td></tr>
+          <tr><td class="text-muted">Seccion:</td>
+            <td>{{ section.nombre or section.name if section else (student.section.nombre if student else '—') }}</td></tr>
+          <tr><td class="text-muted">Asignatura:</td><td>{{ asig.nombre if asig else 'Todas' }}</td></tr>
+          <tr><td class="text-muted">Periodo:</td><td>{{ period if period else 'Todos' }}</td></tr>
+          <tr><td class="text-muted">Fecha:</td><td>{{ current_date.strftime('%d/%m/%Y') }}</td></tr>
+        </table>
+      </div>
+
+      {% if student %}
+      <div class="modern-card p-4">
+        <h6 class="fw-bold mb-3"><i class="bi bi-person me-2"></i>Datos del Estudiante</h6>
+        <div class="small">
+          <div class="fw-semibold fs-6">{{ student.full_name }}</div>
+          <div class="text-muted mb-1">{{ student.registration_number }}</div>
+          <div>{{ student.section.nombre or student.section.name }}</div>
+          {% if student.tutor_name %}
+          <div class="mt-2 pt-2 border-top">
+            <span class="text-muted">Tutor:</span> {{ student.tutor_name }}<br>
+            {% if student.tutor_phone %}
+            <span class="text-muted">Tel:</span> {{ student.tutor_phone }}
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+const originalText = document.getElementById('borrador-text').value;
+</script>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}EduReport - Diagnóstico del Entorno y Base de Datos{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+        <div>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill mb-2">
+                <i class="bi bi-cpu-fill me-1"></i> Diagnóstico Técnico
+            </span>
+            <h2 class="fw-bold mb-0">Entorno del Sistema y Base de Datos</h2>
+        </div>
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Volver a Inicio
+        </a>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Información de Python & Flask -->
+        <div class="col-lg-6">
+            <div class="modern-card p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-filetype-py text-primary fs-4"></i>
+                    <span>Entorno de Ejecución</span>
+                </h5>
+                <ul class="list-unstyled mb-0 small">
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Versión de Python:</span>
+                        <code class="fw-bold text-dark">{{ env.python_version.split()[0] }}</code>
+                    </li>
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Entorno Virtual (venv):</span>
+                        <span class="badge {% if env.is_venv %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ 'Activo' if env.is_venv else 'No Detectado' }}
+                        </span>
+                    </li>
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Ruta Virtualenv:</span>
+                        <span class="text-break font-monospace" style="font-size:0.75rem;">{{ env.venv_prefix }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Modo de Depuración (Debug):</span>
+                        <span class="badge bg-secondary">{{ 'Habilitado' if env.debug_mode else 'Deshabilitado' }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Información de SQLite -->
+        <div class="col-lg-6">
+            <div class="modern-card p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-database-check text-success fs-4"></i>
+                    <span>Base de Datos SQLite</span>
+                </h5>
+                <ul class="list-unstyled mb-0 small">
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Motor ORM:</span>
+                        <span class="fw-semibold">Flask-SQLAlchemy</span>
+                    </li>
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Archivo de Base de Datos:</span>
+                        <code class="text-primary">{{ env.db_path }}</code>
+                    </li>
+                    <li class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Tamaño en Disco:</span>
+                        <span class="fw-bold">{{ env.db_size_kb }} KB</span>
+                    </li>
+                    <li class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Estado de Conexión:</span>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="bi bi-check-circle-fill me-1"></i> Conectado y Verificado
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tablas de la Base de Datos -->
+    <div class="modern-card p-4 mb-4">
+        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-table text-info fs-4"></i>
+            <span>Tablas y Registros Activos</span>
+        </h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tabla / Modelo</th>
+                        <th class="text-end">Cantidad de Registros</th>
+                        <th class="text-center">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in env.tables_info %}
+                    <tr>
+                        <td class="fw-semibold">
+                            <i class="bi bi-check2-circle text-primary me-2"></i> {{ t.name }}
+                        </td>
+                        <td class="text-end fw-bold">
+                            <span class="badge bg-light text-dark border px-3 py-1 fs-6">{{ t.count }}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success">Operativo</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

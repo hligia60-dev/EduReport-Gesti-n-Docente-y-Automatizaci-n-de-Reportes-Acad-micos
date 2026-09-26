@@ -1,0 +1,80 @@
+﻿{% extends 'base.html' %}
+{% block title %}Evaluaciones — EduReport{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <h1 class="fw-bold mb-1"><i class="bi bi-clipboard2-data-fill text-primary me-2"></i>Modulo de Evaluaciones</h1>
+      <p class="text-muted mb-0">Calificaciones P1–P4 · Recuperacion Pedagogica · Evolucion Academica.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('evaluation.register') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+        <i class="bi bi-plus-circle-fill me-1"></i> Registrar Calificacion
+      </a>
+      <form action="{{ url_for('evaluation.seed_demo') }}" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-outline-secondary rounded-pill px-3"
+                onclick="return confirm('Insertar calificaciones demo?')">
+          <i class="bi bi-lightning-charge-fill me-1"></i> Datos Demo
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tarjetas globales -->
+  <div class="row g-3 mb-5">
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold text-primary">{{ stats.promedio_global }}</div>
+        <div class="small text-muted mt-1">Promedio Global</div>
+        <div class="progress mt-2 rounded-pill" style="height:6px;">
+          <div class="progress-bar {{ 'bg-success' if stats.promedio_global >= 70 else 'bg-danger' }}" style="width:{{ stats.promedio_global }}%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold text-success">{{ stats.con_progreso_count }}</div>
+        <div class="small text-muted mt-1">Con Progreso (≥70)</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 text-center h-100 {{ 'border-danger border-2' if stats.bajo_rendimiento_count > 0 else '' }}">
+        <div class="fs-1 fw-bold text-danger">{{ stats.bajo_rendimiento_count }}</div>
+        <div class="small text-muted mt-1">Bajo Rendimiento (&lt;70)</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="modern-card p-4 text-center h-100">
+        <div class="fs-1 fw-bold text-warning">{{ stats.en_recuperacion }}</div>
+        <div class="small text-muted mt-1">En Recuperacion Pedagogica</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acceso por seccion -->
+  <div class="modern-card p-4 mb-4">
+    <h5 class="fw-bold mb-3"><i class="bi bi-people-fill me-2 text-primary"></i>Consultar por Seccion</h5>
+    <div class="row g-2">
+      {% for section in sections %}
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="border rounded-3 p-3">
+          <div class="fw-semibold">{{ section.nombre or section.name }}</div>
+          <div class="text-muted small mb-2">{{ section.grado or '' }}</div>
+          <div class="d-flex flex-wrap gap-1">
+            {% for student in section.estudiantes[:8] %}
+            <a href="{{ url_for('evaluation.student_grades', student_id=student.id) }}"
+               class="btn btn-sm btn-outline-primary rounded-pill px-2" style="font-size:.72rem;">
+              {{ student.first_name.split()[0] }} {{ student.last_name.split()[0] }}
+            </a>
+            {% endfor %}
+            {% if section.estudiantes|length > 8 %}
+            <span class="badge bg-secondary-subtle text-secondary rounded-3 px-2">+{{ section.estudiantes|length - 8 }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

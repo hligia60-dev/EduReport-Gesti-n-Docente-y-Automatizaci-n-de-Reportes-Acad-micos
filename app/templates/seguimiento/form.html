@@ -1,0 +1,109 @@
+﻿{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if seg else 'Nuevo' }} Seguimiento — EduReport{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:780px;">
+  <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+    <a href="{{ url_for('seguimiento.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h1 class="fw-bold mb-0 fs-4">
+      <i class="bi bi-journal-plus text-primary me-2"></i>
+      {{ 'Editar Seguimiento' if seg else 'Nuevo Seguimiento Pedagogico' }}
+    </h1>
+  </div>
+
+  <div class="modern-card p-4">
+    <form method="POST" action="{{ url_for('seguimiento.editar', seg_id=seg.id) if seg else url_for('seguimiento.nuevo') }}">
+      <div class="row g-3">
+        <div class="col-sm-8">
+          <label class="form-label fw-semibold">Estudiante</label>
+          <select name="student_id" class="form-select rounded-3" required id="student-sel">
+            <option value="">-- Seleccionar estudiante --</option>
+            {% for s in students %}
+            <option value="{{ s.id }}"
+              {% if selected_student and s.id == selected_student.id %}selected
+              {% elif seg and s.id == seg.student_id %}selected{% endif %}>
+              {{ s.full_name }} — {{ s.section.nombre or s.section.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <label class="form-label fw-semibold">Aula (auto)</label>
+          <select name="aula_id" class="form-select rounded-3" id="aula-sel">
+            <option value="">-- Seccion --</option>
+            {% for sec in sections %}
+            <option value="{{ sec.id }}"
+              {% if seg and sec.id == seg.aula_id %}selected{% endif %}>
+              {{ sec.nombre or sec.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold">Tipo de Seguimiento</label>
+          <select name="tipo" class="form-select rounded-3" required>
+            {% for t in tipos %}
+            <option value="{{ t }}"
+              {% if seg and seg.tipo == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold">Fecha</label>
+          <input type="date" name="fecha" class="form-control rounded-3"
+                 value="{{ seg.fecha.isoformat() if seg and seg.fecha else today }}" required>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Situacion / Motivo <span class="text-danger">*</span></label>
+          <input type="text" name="motivo" class="form-control rounded-3" required
+                 value="{{ seg.motivo if seg else '' }}"
+                 placeholder="Ej: Tercera ausencia acumulada sin justificacion.">
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Descripcion Detallada</label>
+          <textarea name="descripcion" class="form-control rounded-3" rows="3"
+                    placeholder="Contexto, antecedentes, observaciones del docente...">{{ seg.descripcion if seg else '' }}</textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Acciones Acordadas / Recomendaciones</label>
+          <textarea name="acciones_acordadas" class="form-control rounded-3" rows="3"
+                    placeholder="1. Citar al padre/madre...\n2. Seguimiento semanal...\n3. ...">{{ seg.acciones_acordadas if seg else '' }}</textarea>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold">Estado</label>
+          <select name="status" class="form-select rounded-3">
+            {% for e in estados %}
+            <option value="{{ e }}" {% if seg and seg.status == e %}selected{% endif %}>{{ e }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold">Fecha de Resolucion <span class="text-muted">(si aplica)</span></label>
+          <input type="date" name="fecha_resolucion" class="form-control rounded-3"
+                 value="{{ seg.fecha_resolucion.isoformat() if seg and seg.fecha_resolucion else '' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Responsable</label>
+          <input type="text" name="responsable" class="form-control rounded-3"
+                 value="{{ seg.responsable if seg else 'Departamento de Orientacion y Psicologia' }}"
+                 placeholder="Ej: Prof. Mariana Lopez — Orientadora">
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end mt-4 pt-3 border-top">
+        <a href="{{ url_for('seguimiento.index') }}" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-semibold shadow-sm">
+          <i class="bi bi-cloud-check-fill me-1"></i> Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+const today = new Date().toISOString().slice(0,10);
+document.querySelectorAll('input[type=date]').forEach(i => { if(!i.value) i.value = today; });
+</script>
+{% endblock %}
