@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+
+{% block title %}EduReport - Sistema de Gestión Docente y Reportes Académicos{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="hero-tag mb-3">
+                    <span class="badge bg-success rounded-circle p-1"><i class="bi bi-check" style="font-size: 0.6rem;"></i></span>
+                    <span>Sistema Inicializado y Operativo en <strong>Python {{ python_version }} + Flask {{ flask_version }}</strong></span>
+                </div>
+                <h1 class="hero-title mb-3">
+                    Gestión Docente y Generación Automática de <span>Reportes Académicos</span>
+                </h1>
+                <p class="lead text-secondary mb-4">
+                    Plataforma académica integral diseñada para optimizar el trabajo del docente en el <strong>Nivel Secundario</strong>, centralizando el seguimiento de asistencia, evaluación por competencias y emisión de informes formales.
+                </p>
+
+                <!-- Ciclos Académicos Requeridos -->
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <div class="cycle-badge cycle-1">
+                        <i class="bi bi-mortarboard-fill"></i>
+                        <span><strong>Primer Ciclo:</strong> 1.º, 2.º y 3.º de Secundaria</span>
+                    </div>
+                    <div class="cycle-badge cycle-2">
+                        <i class="bi bi-award-fill"></i>
+                        <span><strong>Segundo Ciclo:</strong> 4.º, 5.º y 6.º de Secundaria</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#simulador" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm">
+                        <i class="bi bi-lightning-charge-fill me-1"></i> Probar Regla de 3 Ausencias
+                    </a>
+                    <a href="{{ url_for('main.arquitectura') }}" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold">
+                        <i class="bi bi-diagram-3 me-1"></i> Ver Arquitectura
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="modern-card p-4 shadow-lg border-0 bg-white">
+                    <div class="d-flex align-items-center justify-content-between pb-3 border-bottom mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-check text-success fs-4"></i>
+                            <h5 class="fw-bold mb-0">Consola de Estado</h5>
+                        </div>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">En Ejecución</span>
+                    </div>
+
+                    <ul class="list-unstyled mb-4">
+                        <li class="d-flex justify-content-between py-2 border-bottom border-light">
+                            <span class="text-muted"><i class="bi bi-filetype-py me-2 text-primary"></i> Framework Web:</span>
+                            <span class="fw-semibold">Flask {{ flask_version }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-light">
+                            <span class="text-muted"><i class="bi bi-database me-2 text-info"></i> Capa ORM:</span>
+                            <span class="fw-semibold">Flask-SQLAlchemy</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom border-light">
+                            <span class="text-muted"><i class="bi bi-hdd me-2 text-secondary"></i> Base de Datos:</span>
+                            <span class="fw-semibold">SQLite (instance/edureport.db)</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2">
+                            <span class="text-muted"><i class="bi bi-bell me-2 text-danger"></i> Regla Ausentismo:</span>
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Alerta a las 3 Faltas</span>
+                        </li>
+                    </ul>
+
+                    <div class="p-3 bg-light rounded-3 text-center">
+                        <small class="text-muted d-block mb-1">Punto de Acceso Local</small>
+                        <code class="text-primary fw-bold fs-6">http://127.0.0.1:5000</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECCIÓN: Simulador Interactivo de la Regla de 3 Ausencias -->
+<section id="simulador" class="py-5 bg-white border-bottom">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill mb-2">
+                    <i class="bi bi-bell-fill me-1"></i> Regla Específica de Negocio
+                </span>
+                <h2 class="fw-bold mb-3">Detección Temprana: Regla de 3 Ausencias</h2>
+                <p class="text-secondary mb-3">
+                    {{ rule_description }}
+                </p>
+                <div class="alert alert-info border-0 rounded-4 mb-4">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="bi bi-info-circle-fill text-info fs-5 mt-1"></i>
+                        <small class="text-secondary">
+                            Esta regla pedagógica previene la deserción escolar. Al activarse la tercera inasistencia, el sistema habilita de forma inmediata el botón para emitir la ficha oficial de citación y seguimiento a la familia.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caja Interactiva de Simulación -->
+            <div class="col-lg-6">
+                <div class="simulator-box" id="simSimulatorBox">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-semibold d-block">Estudiante de Muestra</span>
+                            <h5 class="fw-bold mb-0">Carlos E. Rosario (4.º de Secundaria - Sección A)</h5>
+                        </div>
+                        <div id="simAlertBadge" class="badge bg-danger text-white px-3 py-2 rounded-pill d-none">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ALERTA ACTIVADA!
+                        </div>
+                    </div>
+
+                    <!-- Indicador visual de 3 ausencias -->
+                    <div class="text-center my-4">
+                        <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                            <div class="absence-dot" id="simDot1">1</div>
+                            <span class="text-muted">&bull;</span>
+                            <div class="absence-dot" id="simDot2">2</div>
+                            <span class="text-muted">&bull;</span>
+                            <div class="absence-dot" id="simDot3">3</div>
+                        </div>
+                        <h2 class="display-6 fw-bold mb-1"><span id="simAbsenceCount">0</span> / 3</h2>
+                        <div id="simStatusText" class="mt-2">
+                            <span class="text-success fw-medium"><i class="bi bi-check-circle-fill me-1"></i> Asistencia normal (0 ausencias).</span>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción de la Simulación -->
+                    <div class="d-flex flex-wrap gap-2 justify-content-center mt-4 pt-3 border-top">
+                        <button class="btn btn-danger rounded-pill px-3" id="simBtnAddAbsence">
+                            <i class="bi bi-person-x me-1"></i> Registrar Falta (+1)
+                        </button>
+                        <button class="btn btn-outline-secondary rounded-pill px-3" id="simBtnReset">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reiniciar
+                        </button>
+                        <button class="btn btn-warning rounded-pill px-3 text-dark fw-bold disabled" id="simBtnGenerateReport" disabled>
+                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Generar Informe de Seguimiento
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Módulos de EduReport Planificados -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center max-w-xl mx-auto mb-5">
+            <h2 class="fw-bold mb-2">Módulos del Sistema EduReport</h2>
+            <p class="text-muted">Diseñados conforme a la normativa académica de Educación Secundaria</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-blue">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Primer y Segundo Ciclo</h5>
+                    <p class="text-muted small mb-0">
+                        Gestión curricular de 1.º a 6.º de Secundaria, control de matrícula y expedientes de estudiantes por sección.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-rose">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Control de Asistencia</h5>
+                    <p class="text-muted small mb-0">
+                        Pase de lista diario con registro de presentes, ausencias, tardanzas y justificaciones, con disparo automático de alertas.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-emerald">
+                        <i class="bi bi-journal-check"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Evaluación P1 a P4</h5>
+                    <p class="text-muted small mb-0">
+                        Seguimiento continuo por competencias fundamentales e indicadores de logro, con módulo de recuperación pedagógica (&lt; 70 pts).
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-purple">
+                        <i class="bi bi-printer"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Reportes e Impresión</h5>
+                    <p class="text-muted small mb-0">
+                        Generación de boletines individuales, sábanas oficiales del curso y fichas de seguimiento con soporte nativo de impresión y PDF.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de Vista Previa del Informe de Asistencia -->
+<div class="modal fade" id="reportPreviewModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-danger text-white rounded-top-4">
+                <h5 class="modal-title fw-bold" id="reportModalLabel">
+                    <i class="bi bi-file-earmark-text-fill me-2"></i> Informe de Seguimiento de Asistencia
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="border p-4 rounded-3 bg-white" style="font-family: 'Times New Roman', serif;">
+                    <div class="text-center pb-3 border-bottom mb-3">
+                        <h5 class="fw-bold mb-0">CENTRO EDUCATIVO DE NIVEL SECUNDARIO</h5>
+                        <p class="small text-muted mb-0">DEPARTAMENTO DE ORIENTACIÓN Y PSICOLOGÍA ESCOLAR</p>
+                        <h6 class="fw-bold text-danger mt-2">NOTIFICACIÓN POR ACUMULACIÓN DE 3 AUSENCIAS</h6>
+                    </div>
+
+                    <div class="row g-2 mb-3 small">
+                        <div class="col-6"><strong>Estudiante:</strong> Carlos E. Rosario</div>
+                        <div class="col-6"><strong>Matrícula:</strong> 2026-SEC4-019</div>
+                        <div class="col-6"><strong>Grado / Sección:</strong> 4.º de Secundaria - Sección A</div>
+                        <div class="col-6"><strong>Ciclo:</strong> Segundo Ciclo del Nivel Secundario</div>
+                    </div>
+
+                    <h6 class="fw-bold small border-bottom pb-1">Historial de Faltas Registradas:</h6>
+                    <table class="table table-sm table-bordered small mb-3">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Observación del Docente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>12 de Septiembre</td>
+                                <td class="text-danger fw-bold">Ausente</td>
+                                <td>Sin justificación reportada</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>18 de Septiembre</td>
+                                <td class="text-danger fw-bold">Ausente</td>
+                                <td>No se presentó a clases</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>25 de Septiembre</td>
+                                <td class="text-danger fw-bold">Ausente</td>
+                                <td>Tercera falta acumulada (Alerta activada)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert alert-warning p-2 small mb-4">
+                        <strong>Motivo de Intervención:</strong> Se solicita formalmente la comparecencia del padre, madre o tutor legal ante el Departamento de Orientación Escolar para evaluar las causas del ausentismo y firmar el acuerdo de compromiso pedagógico.
+                    </div>
+
+                    <div class="row text-center pt-4 mt-4 border-top">
+                        <div class="col-4">
+                            <hr class="w-75 mx-auto mb-1">
+                            <small class="text-muted">Firma del Docente</small>
+                        </div>
+                        <div class="col-4">
+                            <hr class="w-75 mx-auto mb-1">
+                            <small class="text-muted">Firma de Orientación</small>
+                        </div>
+                        <div class="col-4">
+                            <hr class="w-75 mx-auto mb-1">
+                            <small class="text-muted">Firma del Padre / Tutor</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light rounded-bottom-4">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4" onclick="window.print()">
+                    <i class="bi bi-printer-fill me-1"></i> Imprimir / Guardar PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

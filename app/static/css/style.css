@@ -1,0 +1,268 @@
+/* ==========================================================================
+   EduReport - Sistema de Gestión Docente y Generación Automática de Reportes
+   Diseño Moderno, Limpio y de Alto Nivel Académico
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap');
+
+:root {
+    --font-heading: 'Outfit', -apple-system, sans-serif;
+    --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    
+    /* Paleta Principal */
+    --color-primary: #1e3a8a;
+    --color-primary-light: #3b82f6;
+    --color-primary-dark: #0f172a;
+    --color-secondary: #0284c7;
+    --color-accent: #06b6d4;
+    
+    /* Estados y Alertas */
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #3b82f6;
+    
+    /* Fondos y Superficies */
+    --bg-page: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-surface-alt: #f1f5f9;
+    --border-subtle: #e2e8f0;
+    --border-hover: #cbd5e1;
+    
+    /* Texto */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --text-inverse: #ffffff;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 12px 28px -6px rgba(15, 23, 42, 0.12);
+    --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+}
+
+/* Base */
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+}
+
+/* Barra de Navegación */
+.navbar-custom {
+    background: linear-gradient(135deg, #090e17 0%, #0f172a 60%, #1e3a8a 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 0.9rem 0;
+}
+
+.brand-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.navbar-brand-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.brand-pill {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hero Section */
+.hero-section {
+    background: radial-gradient(circle at top right, #e0f2fe 0%, #f8fafc 60%);
+    padding: 4.5rem 0 3.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--color-primary-dark);
+    line-height: 1.15;
+}
+
+.hero-title span {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff;
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-sm);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Tarjetas y Contenedores */
+.modern-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-hover);
+}
+
+.card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.icon-blue { background: #eff6ff; color: #2563eb; }
+.icon-sky { background: #f0f9ff; color: #0284c7; }
+.icon-emerald { background: #ecfdf5; color: #059669; }
+.icon-amber { background: #fffbeb; color: #d97706; }
+.icon-purple { background: #faf5ff; color: #7c3aed; }
+.icon-rose { background: #fff1f2; color: #e11d48; }
+
+/* Simulador Interactivo de 3 Ausencias */
+.simulator-box {
+    background: #ffffff;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.simulator-box.alert-active {
+    border-color: var(--color-danger);
+    background-color: #fff1f2;
+}
+
+.absence-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    background-color: #e2e8f0;
+    color: #64748b;
+    transition: all 0.3s ease;
+}
+
+.absence-dot.active {
+    background-color: var(--color-danger);
+    color: #ffffff;
+    transform: scale(1.15);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Badge Pulso */
+.badge-pulse {
+    animation: pulse-danger 1.8s infinite;
+}
+
+@keyframes pulse-danger {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Ciclos Académicos Pills */
+.cycle-badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cycle-1 {
+    background-color: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.cycle-2 {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+/* Modal y Visor de Arquitectura */
+.arch-preview-card {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #1e293b;
+    overflow: hidden;
+}
+
+.arch-preview-img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.arch-preview-img:hover {
+    transform: scale(1.02);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background-color: #0b1120;
+    color: #94a3b8;
+    border-top: 1px solid #1e293b;
+    padding: 2.2rem 0;
+}

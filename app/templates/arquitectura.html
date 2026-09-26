@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Arquitectura del Sistema - EduReport{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}" class="text-decoration-none">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Arquitectura</li>
+        </ol>
+    </nav>
+
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-8">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill mb-2">
+                <i class="bi bi-diagram-3-fill me-1"></i> Documentación Técnica
+            </span>
+            <h1 class="fw-bold display-6">Arquitectura de Software EduReport</h1>
+            <p class="lead text-secondary mb-0">
+                Diseño estructurado en 5 capas desacopladas bajo el patrón <strong>Application Factory</strong> y <strong>Blueprints</strong>.
+            </p>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+            <a href="{{ url_for('main.serve_docs_image', filename='arquitectura.png') }}" target="_blank" class="btn btn-outline-primary rounded-pill px-4">
+                <i class="bi bi-arrows-fullscreen me-1"></i> Ver Diagrama en HD
+            </a>
+        </div>
+    </div>
+
+    <!-- Visor del Diagrama Gráfico -->
+    <div class="arch-preview-card mb-5 shadow-lg">
+        <div class="d-flex align-items-center justify-content-between mb-3 px-2 text-white">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-window-fullscreen text-info"></i>
+                <span class="fw-semibold">Diagrama Técnico de Arquitectura (Generado en Español)</span>
+            </div>
+            <span class="badge bg-secondary">docs/images/arquitectura.png</span>
+        </div>
+        <a href="{{ url_for('main.serve_docs_image', filename='arquitectura.png') }}" target="_blank" title="Clic para ampliar">
+            <img src="{{ url_for('main.serve_docs_image', filename='arquitectura.png') }}" class="arch-preview-img" alt="Arquitectura del Sistema EduReport">
+        </a>
+    </div>
+
+    <!-- Desglose de las 5 Capas -->
+    <div class="mb-5">
+        <h3 class="fw-bold mb-4">Desglose de Capas del Sistema</h3>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-blue">
+                        <i class="bi bi-display"></i>
+                    </div>
+                    <h5 class="fw-bold">1. Interfaz Web y Usuario</h5>
+                    <p class="text-muted small mb-0">
+                        HTML5, CSS3, Bootstrap 5.3 y Jinja2. Orientado a Docentes, Orientación y Secretaría. Incluye <code>print.css</code> para emisión limpia de reportes.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-sky">
+                        <i class="bi bi-boxes"></i>
+                    </div>
+                    <h5 class="fw-bold">2. Núcleo Flask (Blueprints)</h5>
+                    <p class="text-muted small mb-0">
+                        Fábrica <code>create_app()</code> con rutas modularizadas: <code>bp: auth</code>, <code>bp: main</code>, <code>bp: students</code>, <code>bp: attendance</code>, <code>bp: grades</code>, <code>bp: reports</code>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-emerald">
+                        <i class="bi bi-gear-wide-connected"></i>
+                    </div>
+                    <h5 class="fw-bold">3. Lógica y Servicios</h5>
+                    <p class="text-muted small mb-0">
+                        Servicios puros: <code>attendance_service</code> (alerta de 3 faltas), <code>grade_service</code> (promedios P1-P4 y recuperación), y <code>report_service</code>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-6">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-amber">
+                        <i class="bi bi-database-check"></i>
+                    </div>
+                    <h5 class="fw-bold">4. Acceso a Datos (SQLAlchemy ORM)</h5>
+                    <p class="text-muted small mb-0">
+                        Mapeo relacional de entidades escolares a clases Python: <code>User</code>, <code>Cycle</code>, <code>GradeLevel</code> (1.º a 6.º), <code>Section</code>, <code>Student</code>, <code>Attendance</code>, <code>Grade</code> y <code>PedagogicalRecovery</code>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-lg-6">
+                <div class="modern-card p-4">
+                    <div class="card-icon icon-purple">
+                        <i class="bi bi-hdd-network"></i>
+                    </div>
+                    <h5 class="fw-bold">5. Persistencia (SQLite)</h5>
+                    <p class="text-muted small mb-0">
+                        Base de datos local relacional en <code>instance/edureport.db</code>. Cero configuración de servidor externo, portabilidad total, integridad transaccional ACID.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
