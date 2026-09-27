@@ -406,5 +406,5 @@ EduReport está preparado para ser desplegado fácilmente en diferentes entornos
 ## Creadora y Autora del Proyecto
 
 **Lic. Ligia Elena Herrera Frías**  
-*Licenciada en Matemáticas Orientada a educación Secundaria*  
+*Licenciada en Matemáticas Orientada a Educación Secundaria*  
 *Ministerio de Educación de la República Dominicana (MINERD)*
