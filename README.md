@@ -8,7 +8,7 @@ Sistema Web de Gestión Académica, Control de Asistencia y Generación Automati
 > ### 💻 ENLACES PARA EJECUCIÓN LOCAL:
 > - 🚀 **Aplicación en Vivo:** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/dashboard
 > - ⚙️ **Repositorio de EduReport en Github:** https://github.com/hligia60-dev/EduReport-Gesti-n-Docente-y-Automatizaci-n-de-Reportes-Acad-micos
-> - 📊 **Enlace del video en Youtube:** 
+> - 📊 **Enlace del video en Youtube:** https://youtu.be/vFCBrPLwAb8?si=leFyENdabhkjZQKz
 > - 👥 **Estudiantes y Expedientes:** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/estudiantes/
 > - 📅 **Pase de Lista (Asistencia):** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/asistencia/
 > - 📝 **Evaluaciones (4 Calificaciones Ord. + 4 RP):** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/evaluaciones/
