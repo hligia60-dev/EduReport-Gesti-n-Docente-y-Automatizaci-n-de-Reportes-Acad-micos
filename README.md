@@ -3,19 +3,17 @@
 Sistema Web de Gestión Académica, Control de Asistencia y Generación Automatizada de Reportes Escolares Oficiales para el Nivel Secundario del Ministerio de Educación de la República Dominicana (MINERD).
 
 > ### 🌐 ENLACE AL DESPLIEGUE FUNCIONAL EN LA NUBE (Render):
-> 🚀 **Aplicación en Vivo:** [https://edureport-gestion-docente-y-automatizacion.onrender.com](https://edureport-gestion-docente-y-automatizacion.onrender.com) *(o la URL de tu servicio web en Render)*
+> 🏠 **Página Principal:**  https://edureport-gesti-n-docente-y-automatizaci.onrender.com *(o la URL de tu servicio web en Render)*
 >
 > ### 💻 ENLACES PARA EJECUCIÓN LOCAL:
-> - 🏠 **Página Principal:** [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
-> - 📊 **Dashboard Académico:** [http://127.0.0.1:5000/dashboard](http://127.0.0.1:5000/dashboard)
-> - 👥 **Estudiantes y Expedientes:** [http://127.0.0.1:5000/estudiantes/](http://127.0.0.1:5000/estudiantes/)
-> - 📅 **Pase de Lista (Asistencia):** [http://127.0.0.1:5000/asistencia/registrar](http://127.0.0.1:5000/asistencia/registrar)
-> - 📝 **Evaluaciones (4 Calificaciones Ord. + 4 RP):** [http://127.0.0.1:5000/evaluaciones/registrar](http://127.0.0.1:5000/evaluaciones/registrar)
-> - 📄 **Generador de Reportes en PDF:** [http://127.0.0.1:5000/reportes/](http://127.0.0.1:5000/reportes/)
-> - ⚙️ **Consola del Entorno (Antigravity):** [http://127.0.0.1:5000/entorno](http://127.0.0.1:5000/entorno)
->
-> *(Al usar **Go Live** dentro de Google Antigravity, se abrirá el lanzador automático index.html que redirige directamente a la app).*
-
+> - 🚀 **Aplicación en Vivo:** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/dashboard
+> - ⚙️ **Repositorio de EduReport en Github:** https://hligia60-dev.github.io/EduReport-Gesti-n-Docente-y-Automatizaci-n-de-Reportes-Acad-micos/
+> - 📊 **Enlace del video en Youtube:** 
+> - 👥 **Estudiantes y Expedientes:** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/estudiantes/
+> - 📅 **Pase de Lista (Asistencia):** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/asistencia/
+> - 📝 **Evaluaciones (4 Calificaciones Ord. + 4 RP):** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/evaluaciones/
+> - 📄 **Generador de Reportes en PDF:** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/reportes/
+> - 
 ---
 
 
