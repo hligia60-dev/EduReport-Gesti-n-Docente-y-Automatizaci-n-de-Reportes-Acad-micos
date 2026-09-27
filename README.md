@@ -2,7 +2,19 @@
 
 Sistema Web de Gestión Académica, Control de Asistencia y Generación Automatizada de Reportes Escolares Oficiales para el Nivel Secundario del Ministerio de Educación de la República Dominicana (MINERD).
 
+> ### 🌐 ENLACES DIRECTOS PARA ABRIR LA APLICACIÓN:
+> - 🚀 **Landing Page Oficial:** [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+> - 📊 **Dashboard Académico:** [http://127.0.0.1:5000/dashboard](http://127.0.0.1:5000/dashboard)
+> - 👥 **Estudiantes y Expedientes:** [http://127.0.0.1:5000/estudiantes/](http://127.0.0.1:5000/estudiantes/)
+> - 📅 **Pase de Lista (Asistencia):** [http://127.0.0.1:5000/asistencia/registrar](http://127.0.0.1:5000/asistencia/registrar)
+> - 📝 **Evaluaciones (4 Calificaciones Ord. + 4 RP):** [http://127.0.0.1:5000/evaluaciones/registrar](http://127.0.0.1:5000/evaluaciones/registrar)
+> - 📄 **Generador de Reportes en PDF:** [http://127.0.0.1:5000/reportes/](http://127.0.0.1:5000/reportes/)
+> - ⚙️ **Consola del Entorno:** [http://127.0.0.1:5000/entorno](http://127.0.0.1:5000/entorno)
+>
+> *(Si abres con **Go Live** en Antigravity, se abrirá el lanzador automático que te redirige directamente a la app).*
+
 ---
+
 
 ## Descripción
 

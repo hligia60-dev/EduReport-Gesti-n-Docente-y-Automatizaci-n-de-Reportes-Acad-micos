@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduReport — Lanzador Rápido Antigravity / Go Live</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    
+    <!-- Bootstrap 5.3 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-accent: #2563eb;
+            --dark-surface: #0f172a;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .launcher-card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.12), 0 0 1px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            max-width: 780px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .launcher-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+            color: #ffffff;
+            padding: 36px 32px;
+            position: relative;
+        }
+        .btn-launch {
+            transition: all 0.25s ease;
+            font-weight: 600;
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+        }
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.2);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            padding: 6px 14px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: #ffffff;
+        }
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.35);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="launcher-card">
+    <!-- Cabecera -->
+    <div class="launcher-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div class="d-flex align-items-center gap-3">
+                <img src="app/static/img/logo_minerd.png" alt="MINERD" style="height: 48px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+                <div class="vr bg-white opacity-50" style="height: 32px;"></div>
+                <img src="app/static/img/logo_centro.png" alt="Centro Educativo" style="height: 44px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+            </div>
+            <div class="status-badge">
+                <span class="pulse-dot"></span>
+                <span>Servidor Flask en Puerto 5000</span>
+            </div>
+        </div>
+
+        <h2 class="fw-bold mb-1">🎓 EduReport</h2>
+        <p class="mb-2 text-white-50 small">Sistema Oficial de Gestión Escolar, Asistencia y Evaluaciones (MINERD República Dominicana)</p>
+        
+        <div class="pt-2 border-top border-white border-opacity-25 mt-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span class="small text-white">
+                <i class="bi bi-award-fill text-warning me-1"></i>
+                Creadora y Autora: <strong>Lic. Ligia Elena Herrera Frías</strong>
+            </span>
+            <span class="badge bg-white text-primary rounded-pill px-3 py-1 fw-bold small">v1.0 Operativo</span>
+        </div>
+    </div>
+
+    <!-- Cuerpo con accesos directos -->
+    <div class="p-4 p-md-5">
+        <div class="alert alert-primary border-0 rounded-4 d-flex align-items-center justify-content-between gap-3 mb-4 p-3 shadow-sm">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary text-white rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                    <i class="bi bi-rocket-takeoff-fill fs-5"></i>
+                </div>
+                <div>
+                    <strong class="d-block text-dark">Acceso Rápido al Sistema</strong>
+                    <small class="text-muted" id="redirectMsg">Haz clic en el botón principal para abrir la aplicación completa en Flask.</small>
+                </div>
+            </div>
+            <a href="http://127.0.0.1:5000/" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap" id="btnPrincipal">
+                Abrir App <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <h6 class="text-uppercase text-muted fw-bold small mb-3">Accesos Directos a Módulos:</h6>
+
+        <div class="row g-3">
+            <div class="col-sm-6">
+                <a href="http://127.0.0.1:5000/" class="btn btn-outline-primary btn-launch">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-house-door-fill fs-4 text-primary"></i>
+                        <div class="text-start">
+                            <div class="fw-bold text-dark">Landing Page</div>
+                            <small class="text-muted">Presentación oficial y resumen</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-box-arrow-up-right text-muted small"></i>
+                </a>
+            </div>
+
+            <div class="col-sm-6">
+                <a href="http://127.0.0.1:5000/dashboard" class="btn btn-outline-success btn-launch">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-speedometer2 fs-4 text-success"></i>
+                        <div class="text-start">
+                            <div class="fw-bold text-dark">Dashboard Académico</div>
+                            <small class="text-muted">Métricas, alertas y gráficos</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-box-arrow-up-right text-muted small"></i>
+                </a>
+            </div>
+
+            <div class="col-sm-6">
+                <a href="http://127.0.0.1:5000/estudiantes/" class="btn btn-outline-secondary btn-launch">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-people-fill fs-4 text-secondary"></i>
+                        <div class="text-start">
+                            <div class="fw-bold text-dark">Estudiantes</div>
+                            <small class="text-muted">Matrícula, teléfonos y fichas</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-box-arrow-up-right text-muted small"></i>
+                </a>
+            </div>
+
+            <div class="col-sm-6">
+                <a href="http://127.0.0.1:5000/asistencia/registrar" class="btn btn-outline-info btn-launch">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-check2-square fs-4 text-info"></i>
+                        <div class="text-start">
+                            <div class="fw-bold text-dark">Pase de Lista Diario</div>
+                            <small class="text-muted">Estados P, T, A, E y alertas</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-box-arrow-up-right text-muted small"></i>
+                </a>
+            </div>
+
+            <div class="col-sm-6">
+                <a href="http://127.0.0.1:5000/evaluaciones/registrar" class="btn btn-outline-warning btn-launch">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-clipboard2-data-fill fs-4 text-warning"></i>
+                        <div class="text-start">
+                            <div class="fw-bold text-dark">Evaluaciones (4 Ord. + 4 RP)</div>
+                            <small class="text-muted">Calificaciones por competencia</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-box-arrow-up-right text-muted small"></i>
+                </a>
+            </div>
+
+            <div class="col-sm-6">
+                <a href="http://127.0.0.1:5000/reportes/" class="btn btn-outline-danger btn-launch">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-file-earmark-pdf-fill fs-4 text-danger"></i>
+                        <div class="text-start">
+                            <div class="fw-bold text-dark">Reportes en PDF</div>
+                            <small class="text-muted">Informes oficiales con 2 logos</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-box-arrow-up-right text-muted small"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-top text-center text-muted small">
+            <span>Nota: EduReport se ejecuta con Python y Flask en <code>http://127.0.0.1:5000</code>.</span>
+        </div>
+    </div>
+</div>
+
+<script>
+// Intento de redirección automática suave si el servidor Flask está activo
+document.addEventListener('DOMContentLoaded', function() {
+    let countdown = 3;
+    const msgEl = document.getElementById('redirectMsg');
+    
+    // Si estamos en un puerto diferente al 5000 (ej. 5500 de Live Server)
+    if (window.location.port !== '5000') {
+        const interval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                msgEl.innerText = `Redirigiendo a EduReport en http://127.0.0.1:5000 en ${countdown} segundos...`;
+            } else {
+                clearInterval(interval);
+                window.location.href = 'http://127.0.0.1:5000/';
+            }
+        }, 1000);
+    }
+});
+</script>
+
+</body>
+</html>
