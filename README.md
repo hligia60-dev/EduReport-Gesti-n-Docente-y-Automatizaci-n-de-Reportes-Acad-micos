@@ -13,7 +13,6 @@ Sistema Web de Gestión Académica, Control de Asistencia y Generación Automati
 > - 📅 **Pase de Lista (Asistencia):** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/asistencia/
 > - 📝 **Evaluaciones (4 Calificaciones Ord. + 4 RP):** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/evaluaciones/
 > - 📄 **Generador de Reportes en PDF:** https://edureport-gesti-n-docente-y-automatizaci.onrender.com/reportes/
-> - 
 ---
 
 
