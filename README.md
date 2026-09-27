@@ -371,7 +371,7 @@ Para colaborar y subir cambios a GitHub:
 EduReport está preparado para ser desplegado fácilmente en diferentes entornos:
 
 1. **Despliegue Funcional en la Nube (Render):**
-   - **Enlace de la Aplicación en Vivo:** [https://edureport-gestion-docente-y-automatizacion.onrender.com](https://edureport-gestion-docente-y-automatizacion.onrender.com)
+   - **Enlace de la Aplicación en Vivo:**  https://edureport-gesti-n-docente-y-automatizaci.onrender.com/dashboard
    - El proyecto incluye los archivos oficiales para Render:
      - `Procfile`: `web: gunicorn wsgi:app`
      - `render.yaml`: Especificación de servicio web Python en plan gratuito con variables de entorno automáticas (`SECRET_KEY`, `FLASK_ENV=production`, `PYTHON_VERSION=3.11.9`).
@@ -406,5 +406,5 @@ EduReport está preparado para ser desplegado fácilmente en diferentes entornos
 ## Creadora y Autora del Proyecto
 
 **Lic. Ligia Elena Herrera Frías**  
-*Especialista en Gestión Educativa y Evaluación Curricular del Nivel Secundario*  
+*Licenciada en Matemáticas Orientada a educación Secundaria*  
 *Ministerio de Educación de la República Dominicana (MINERD)*
