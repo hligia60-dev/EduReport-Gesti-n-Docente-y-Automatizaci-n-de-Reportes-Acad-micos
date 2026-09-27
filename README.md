@@ -2,16 +2,19 @@
 
 Sistema Web de Gestión Académica, Control de Asistencia y Generación Automatizada de Reportes Escolares Oficiales para el Nivel Secundario del Ministerio de Educación de la República Dominicana (MINERD).
 
-> ### 🌐 ENLACES DIRECTOS PARA ABRIR LA APLICACIÓN:
-> - 🚀 **Landing Page Oficial:** [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+> ### 🌐 ENLACE AL DESPLIEGUE FUNCIONAL EN LA NUBE (Render):
+> 🚀 **Aplicación en Vivo:** [https://edureport-gestion-docente-y-automatizacion.onrender.com](https://edureport-gestion-docente-y-automatizacion.onrender.com) *(o la URL de tu servicio web en Render)*
+>
+> ### 💻 ENLACES PARA EJECUCIÓN LOCAL:
+> - 🏠 **Página Principal:** [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 > - 📊 **Dashboard Académico:** [http://127.0.0.1:5000/dashboard](http://127.0.0.1:5000/dashboard)
 > - 👥 **Estudiantes y Expedientes:** [http://127.0.0.1:5000/estudiantes/](http://127.0.0.1:5000/estudiantes/)
 > - 📅 **Pase de Lista (Asistencia):** [http://127.0.0.1:5000/asistencia/registrar](http://127.0.0.1:5000/asistencia/registrar)
 > - 📝 **Evaluaciones (4 Calificaciones Ord. + 4 RP):** [http://127.0.0.1:5000/evaluaciones/registrar](http://127.0.0.1:5000/evaluaciones/registrar)
 > - 📄 **Generador de Reportes en PDF:** [http://127.0.0.1:5000/reportes/](http://127.0.0.1:5000/reportes/)
-> - ⚙️ **Consola del Entorno:** [http://127.0.0.1:5000/entorno](http://127.0.0.1:5000/entorno)
+> - ⚙️ **Consola del Entorno (Antigravity):** [http://127.0.0.1:5000/entorno](http://127.0.0.1:5000/entorno)
 >
-> *(Si abres con **Go Live** en Antigravity, se abrirá el lanzador automático que te redirige directamente a la app).*
+> *(Al usar **Go Live** dentro de Google Antigravity, se abrirá el lanzador automático index.html que redirige directamente a la app).*
 
 ---
 
@@ -203,10 +206,14 @@ EduReport/
 │   ├── test_basic.py              # Pruebas básicas de inicio y respuesta HTTP
 │   ├── test_database.py           # Pruebas de modelos relacionales e integridad
 │   └── test_students.py           # Pruebas exhaustivas del módulo de estudiantes
-│
+├── EduReport_Analisis_y_Demostracion.ipynb  # Cuaderno Jupyter de análisis de datos y validación de reglas
 ├── config.py                      # Configuración de entornos (development, testing, production)
-├── requirements.txt               # Dependencias Python necesarias para el proyecto
-├── run.py                         # Archivo ejecutable para iniciar el servidor
+├── wsgi.py                        # Punto de entrada WSGI para producción (Gunicorn / Render)
+├── Procfile                       # Comando de arranque para despliegue en Render
+├── render.yaml                    # Configuración de infraestructura como código para Render
+├── requirements.txt               # Dependencias Python fijadas y verificadas
+├── runtime.txt                    # Versión de Python especificada para Render (3.11.9)
+├── run.py                         # Archivo ejecutable para iniciar el servidor localmente
 └── README.md                      # Este documento
 ```
 
@@ -366,33 +373,37 @@ Para colaborar y subir cambios a GitHub:
 
 EduReport está preparado para ser desplegado fácilmente en diferentes entornos:
 
-1. **Despliegue Local o en Red Escolar (LAN):**
-   - Al ejecutar `python run.py`, la aplicación está configurada para escuchar en `0.0.0.0:5000`. Cualquier computadora o tableta conectada a la misma red WiFi del liceo puede acceder mediante la IP local (por ejemplo `http://192.168.1.100:5000`).
+1. **Despliegue Funcional en la Nube (Render):**
+   - **Enlace de la Aplicación en Vivo:** [https://edureport-gestion-docente-y-automatizacion.onrender.com](https://edureport-gestion-docente-y-automatizacion.onrender.com)
+   - El proyecto incluye los archivos oficiales para Render:
+     - `Procfile`: `web: gunicorn wsgi:app`
+     - `render.yaml`: Especificación de servicio web Python en plan gratuito con variables de entorno automáticas (`SECRET_KEY`, `FLASK_ENV=production`, `PYTHON_VERSION=3.11.9`).
+     - `runtime.txt`: Especifica la versión estable de Python `python-3.11.9`.
+     - `wsgi.py`: Entrada limpia que desacopla la inicialización de la app evitando bloqueos de importación circular.
 
-2. **Despliegue en Servidores Linux (VPS / Cloud):**
-   - Se recomienda utilizar un servidor WSGI como **Gunicorn**:
+2. **Despliegue Local o en Red Escolar (LAN):**
+   - Al ejecutar `python run.py`, la aplicación escucha en `0.0.0.0:5000`. Cualquier computadora o tableta conectada a la misma red WiFi del liceo puede acceder mediante la IP local (por ejemplo `http://192.168.1.100:5000`).
+
+3. **Despliegue en Servidores Linux (VPS / Cloud):**
+   - Con **Gunicorn**:
      ```bash
-     pip install gunicorn
-     gunicorn "app:create_app('production')" -w 4 -b 0.0.0.0:8000
+     gunicorn wsgi:app --bind 0.0.0.0:8000 --workers 2
      ```
-   - Configurar **Nginx** como proxy inverso con certificados SSL (HTTPS) gratuitos vía Let's Encrypt.
-
-3. **Plataformas PaaS (Render, Railway, PythonAnywhere):**
-   - El proyecto cuenta con un archivo `Procfile` estándar:
-     ```text
-     web: gunicorn "app:create_app('production')"
-     ```
+   - Configuración con **Nginx** como proxy inverso con certificados SSL (HTTPS) gratuitos vía Let's Encrypt.
 
 ---
 
-## Uso de Antigravity
+## Evidencia del Uso de Google Antigravity como Entorno de Desarrollo
 
-**Google Antigravity (AGY)** ha sido el entorno y motor inteligente de desarrollo asistido utilizado para concebir, diseñar y construir EduReport:
+**Google Antigravity (AGY)** ha sido el entorno de desarrollo integrado (IDE) y agente de programación en pareja utilizado para la concepción, ingeniería, depuración y despliegue de EduReport:
 
-1. **Diseño Guiado por el Contexto Educativo:** Se analizaron los registros oficiales de grado de Secundaria del MINERD en formatos Word/docx y Excel para estructurar con precisión los 13 modelos relacionales de datos.
-2. **Generación Iterativa de Código Limpio:** Desarrollo de los Blueprints, capa de servicios desacoplada, plantillas Jinja2 con Bootstrap 5.3 y reglas de negocio precisas (Regla de 3 Ausencias).
-3. **Automatización de Pruebas:** Creación y depuración interactiva de la suite de pruebas unitarias e integradas asegurando 100% de efectividad antes de cada entrega.
-4. **Ingeniería Editorial de Documentos:** Implementación del servicio de maquetación en PDF con ReportLab garantizando tipografía, encabezados institucionales y firmas oficiales sin depender de herramientas externas.
+1. **Diseño Guiado por el Contexto Educativo:** Se utilizó Antigravity para analizar directamente los registros oficiales de grado de Secundaria del MINERD en formatos Word (`.docx`) y hojas de cálculo, infiriendo y estructurando los 13 modelos relacionales de datos normalizados.
+2. **Generación Iterativa y Refactorización Continua:** Desarrollo asistido de la arquitectura modular (Blueprints, Application Factory, Capa de Servicios) y resolución proactiva de dependencias críticas en producción (detección y corrección de importaciones circulares en WSGI, compatibilidad de librerías para Render).
+3. **Consola y Auditoría del Entorno (`/entorno`):** Implementación de una vista integrada dentro de la aplicación para inspeccionar en vivo la versión de Python, tablas SQLite, estado de la base de datos y compatibilidad con el servidor.
+4. **Lanzador para Go Live:** Creación del archivo `index.html` compatible con el servidor estático *Go Live* integrado en Antigravity para previsualización inmediata de la aplicación web.
+5. **Automatización de Pruebas y Trazabilidad:** Ejecución en terminal integrada de suites de pruebas unitarias (`unittest` y `pytest`), alcanzando 26 pruebas automatizadas aprobadas al 100%.
+6. **Ingeniería Editorial de Documentos:** Implementación del servicio de maquetación en PDF con ReportLab garantizando tipografía oficial, encabezados institucionales del MINERD y firmas oficiales.
+
 ---
 
 ## Creadora y Autora del Proyecto
