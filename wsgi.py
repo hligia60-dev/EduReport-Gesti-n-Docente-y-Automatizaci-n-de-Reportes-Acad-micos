@@ -1,6 +1,6 @@
 """
 Punto de entrada WSGI para servidores de producción.
-Render / Gunicorn usa: gunicorn app:app
+Gunicorn usa: gunicorn wsgi:app
 """
 import os
 from app import create_app
