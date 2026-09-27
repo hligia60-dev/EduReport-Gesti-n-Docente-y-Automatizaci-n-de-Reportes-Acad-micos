@@ -232,10 +232,12 @@ def generate_official_pdf(data, output_stream=None):
     # ─────────────────────────────────────────────────────────────────────────
     inst = data.get('institucion', get_default_institutional_data())
 
-    # Buscar logos oficiales (MINERD a la izquierda y Centro Educativo a la derecha)
-    logo_minerd_path = os.path.join('app', 'static', 'img', 'logo_minerd.png')
-    logo_centro_path = os.path.join('app', 'static', 'img', 'logo_centro.png')
-    
+    # Buscar logos oficiales usando rutas absolutas basadas en la ubicación de este archivo
+    # Esto garantiza que funcionen en cualquier entorno (local, Render, Docker, etc.)
+    _base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static', 'img'))
+    logo_minerd_path = os.path.join(_base_dir, 'logo_minerd.png')
+    logo_centro_path = os.path.join(_base_dir, 'logo_centro.png')
+
     logo_minerd = None
     if os.path.exists(logo_minerd_path):
         try:
@@ -247,11 +249,6 @@ def generate_official_pdf(data, output_stream=None):
     if os.path.exists(logo_centro_path):
         try:
             logo_centro = Image(logo_centro_path, width=50, height=50)
-        except Exception:
-            logo_centro = None
-    elif os.path.exists(os.path.join('Logos', 'images.png')):
-        try:
-            logo_centro = Image(os.path.join('Logos', 'images.png'), width=50, height=50)
         except Exception:
             logo_centro = None
 
